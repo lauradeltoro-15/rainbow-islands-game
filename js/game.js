@@ -7,6 +7,7 @@ const Game = {
     ctx: undefined,
     FPS: 60,
     intervalId: undefined,
+    framesCounter: 0,
     canvasSize: {
         w: undefined,
         h: undefined
@@ -18,8 +19,9 @@ const Game = {
         XKey: 88
     },
     background: undefined,
+    player: undefined,
     basePosition: {
-        y: 20,
+        y: 200,
         x: undefined
     },
 
@@ -49,9 +51,16 @@ const Game = {
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg", this.basePosition.y)
         this.background.createBackground()
+        this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
+        this.player.createImgPlayer()
         this.intervalId = setInterval(() => {
+
             this.clearGame()
             this.background.drawBackground()
+            this.player.drawPlayer(this.framesCounter)
+
+            this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
+
         }, 1000 / this.FPS)
     },
     endGame() {
@@ -61,4 +70,3 @@ const Game = {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     }
 }
-
