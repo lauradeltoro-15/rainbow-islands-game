@@ -1,3 +1,26 @@
+h1,
+h2,
+p,
+.start-button {
+    font-family: 'Press Start 2P',
+        cursive;
+    text-align: center;
+    color: #777
+}
+
+p {
+    font-size: 0.7em;
+}
+
+h1 {
+    color: #fe7f71
+}
+
+h2 {
+    color: #fad57d;
+    font-size: 1.5em
+}
+
 #canvas {
     display: none
 }
@@ -6,6 +29,37 @@
     display: block
 }
 
+.start-button {
+    padding: 20px 50px;
+    border: 3px solid #fe5340;
+    background-color: #fe7f71;
+    color: white
+}
+
 .game-instructions.inactive {
     display: none
+}
+
+section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+article.image-container {
+    display: flex;
+    justify-content: center;
+}
+
+article.instructions-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px 100px
+}
+
+.main-image {
+    width: 700px;
 }
