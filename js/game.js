@@ -54,7 +54,6 @@ const Game = {
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
         this.player.createImgPlayer()
         this.intervalId = setInterval(() => {
-
             this.clearGame()
             this.background.drawBackground()
             this.player.drawPlayer(this.framesCounter)

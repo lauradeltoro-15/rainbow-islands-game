@@ -3,12 +3,16 @@ class Player {
         this.ctx = ctx
         this.canvasSize = canvasSize
         this.keys = keys
+        this.isMoving = false
+        this.isJumping = false
+        this.isConstructing = false
+        this.isFacingRight = true
         this.playerPosition = {
             x: 50,
             y: 500
         }
         this.basePosition = {
-            y: YBasePosition
+            y: this.playerPosition.y
         }
         this.playerImg = {
             img: undefined,
@@ -22,7 +26,7 @@ class Player {
         }
         this.playerVelocity = {
             x: 5,
-            y: 5
+            y: 20
         }
         this.playerPhysics = {
             gravity: 0.4
@@ -48,13 +52,13 @@ class Player {
             this.playerSize.h
         )
 
-        this.animatePlayer(framesCounter)
+        this.isMoving ? this.animatePlayer(framesCounter) : null
     }
     animatePlayer(framesCounter) {
         framesCounter % 5 === 0 ? this.playerImg.framesIndex++ : null
         this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
     }
-    walk(direction) {
+    move(direction) {
         if (direction === "left") {
             this.playerPosition.x -= this.playerVelocity.x
         }
@@ -63,8 +67,6 @@ class Player {
         }
     }
     jump() {
-        this.playerPosition.y -= 40
-        this.velY -= 8
 
     }
     createRainbow() {
@@ -75,14 +77,30 @@ class Player {
         document.addEventListener("keydown", e => {
             switch (e.keyCode) {
                 case this.keys.LEFT:
-                    this.walk("left")
+                    this.isMoving = true
+                    this.move("left")
+
                     break;
                 case this.keys.RIGHT:
-                    this.walk("right")
+                    this.isMoving = true
+                    this.move("right")
+
                     break;
                 case this.keys.SPACE:
-                    this.jump()
+
             }
+        })
+        document.addEventListener("keyup", e => {
+            switch (e.keyCode) {
+                case this.keys.LEFT:
+                    this.isMoving = false
+
+                    break;
+                case this.keys.RIGHT:
+                    this.isMoving = false
+                    break;
+            }
+
         })
     }
 
