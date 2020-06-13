@@ -7,6 +7,7 @@ class Player {
         this.isJumping = false
         this.isConstructing = false
         this.isFacingRight = true
+        this.rainbowsConstructed = []
         this.playerPosition = {
             x: 50,
             y: 500
@@ -26,10 +27,10 @@ class Player {
         }
         this.playerVelocity = {
             x: 5,
-            y: 20
+            y: 10
         }
         this.playerPhysics = {
-            gravity: 0.4
+            gravity: 0.5
         }
     }
     createImgPlayer() {
@@ -50,12 +51,25 @@ class Player {
             this.playerPosition.y,
             this.playerSize.w,
             this.playerSize.h
-        )
-
+        );
+        this.rainbowsConstructed.forEach(elm => {
+            elm.drawRainbow()
+        })
         this.isMoving ? this.animatePlayer(framesCounter) : null
+        if (this.isJumping) {
+            this.animatePlayer(framesCounter)
+            this.aplyJumpGravity()
+        }
+        // if (this.isConstructing) {
+        //     this.rainbowsConstructed[this.rainbowsConstructed.length - 1].drawRainbow()
+        //     if (this.rainbowsConstructed[this.rainbowsConstructed.length - 1].rainbowSize.w >= 150) {
+        //         this.isConstructing = false
+        //     }
+        // }
+
     }
     animatePlayer(framesCounter) {
-        framesCounter % 5 === 0 ? this.playerImg.framesIndex++ : null
+        framesCounter % 3 === 0 ? this.playerImg.framesIndex++ : null
         this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
     }
     move(direction) {
@@ -66,39 +80,68 @@ class Player {
             this.playerPosition.x += this.playerVelocity.x
         }
     }
-    jump() {
-
+    aplyJumpGravity() {
+        this.playerPosition.y -= this.playerVelocity.y
+        this.playerVelocity.y -= this.playerPhysics.gravity
+        if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y) {
+            this.playerVelocity.y = 10
+            this.playerPosition.y = this.basePosition.y
+            this.playerImg.framesIndex = 0
+            this.isJumping = false;
+        }
     }
-    createRainbow() {
+    // createRainbow() {
+    //     this.rainbow.w += this.rainbow.grow
 
 
-    }
+
+    //     let rainbowItem
+    //     if (this.isFacingRight) {
+    //         this.ctx.fillRect(this.rainbow.position.x, this.rainbow.position.y, this.rainbow.w, this.rainbow.h)
+    //     }
+    //     if (this.rainbow.w >= 300) {
+
+    //         this.rainbows.push(this.rainbow)
+    //         this.isConstructing = false
+    //     }
+    // }
     setListeners() {
         document.addEventListener("keydown", e => {
             switch (e.keyCode) {
                 case this.keys.LEFT:
                     this.isMoving = true
                     this.move("left")
-
                     break;
                 case this.keys.RIGHT:
                     this.isMoving = true
                     this.move("right")
-
                     break;
                 case this.keys.SPACE:
+                    this.isJumping = true
+                    break;
+                case this.keys.XKey:
+                    this.isConstructing = true
+                    this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight))
+
+                    break;
 
             }
         })
         document.addEventListener("keyup", e => {
             switch (e.keyCode) {
                 case this.keys.LEFT:
+                    this.playerImg.framesIndex = 0
                     this.isMoving = false
 
                     break;
                 case this.keys.RIGHT:
+                    this.playerImg.framesIndex = 0
                     this.isMoving = false
                     break;
+                case this.keys.XKey:
+                    this.isConstructing = false
+                    break;
+
             }
 
         })

@@ -41,12 +41,7 @@ const Game = {
         this.canvasDom.setAttribute('height', this.canvasSize.h)
     },
     setEventListeners() {
-        document.onkeydown = e => {
-            e.keyCode === this.keys.SPACE ? console.log("SPACE") : null
-            e.keyCode === this.keys.LEFT ? console.log("LEFT") : null
-            e.keyCode === this.keys.RIGHT ? console.log("RIGHT") : null
-            e.keyCode === this.keys.XKey ? console.log("X") : null
-        }
+
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg", this.basePosition.y)
