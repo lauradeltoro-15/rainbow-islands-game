@@ -1,4 +1,11 @@
-* {
-    margin: 0;
-    padding: 0;
+#canvas {
+    display: none
+}
+
+#canvas.start {
+    display: block
+}
+
+.game-instructions.inactive {
+    display: none
 }

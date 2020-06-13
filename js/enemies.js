@@ -61,13 +61,6 @@ class FloorEnemie extends Enemie {
         super(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX)
     }
     move() {
-        console.log(this.enemiePosition.x,
-            this.enemieSize.w,
-            this.enemiePosition.x,
-            this.rangeX.min,
-            this.enemieVelocity.x
-
-        )
         this.enemiePosition.x + this.enemieSize.w >= this.rangeX.max || this.enemiePosition.x <= this.rangeX.min ? this.enemieVelocity.x = -this.enemieVelocity.x : null
         this.enemiePosition.x += this.enemieVelocity.x
     }

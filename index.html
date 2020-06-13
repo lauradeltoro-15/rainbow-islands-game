@@ -5,11 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rainbow Island Game</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="styles/style.css" rel="stylesheet">
 </head>
 
 <body>
+    <section class="game-instructions">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <img src="images/main-image.png" alt="main-logo">
+                </div>
+                <div class="col-6">
+                    <button class="start-button">START GAME</button>
+                </div>
+            </div>
+        </div>
+    </section>
     <canvas id="canvas"></canvas>
+
+
+
     <script type="text/javascript" src="js/background.js"></script>
     <script type="text/javascript" src="js/platforms.js"></script>
     <script type="text/javascript" src="js/player.js"></script>
