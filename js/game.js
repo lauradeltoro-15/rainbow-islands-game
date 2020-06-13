@@ -20,6 +20,7 @@ const Game = {
     },
     background: undefined,
     player: undefined,
+    enemies: [],
     basePosition: {
         y: 200,
         x: undefined
@@ -45,13 +46,21 @@ const Game = {
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg", this.basePosition.y)
-        this.background.createBackground()
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
+        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, 400, 70, 70, 1, 1, this.canvasSize.w, 0))
+
+        this.background.createBackground()
         this.player.createImgPlayer()
+        this.enemies.forEach(elm => elm.createImgEnemie())
+
+
         this.intervalId = setInterval(() => {
+
             this.clearGame()
             this.background.drawBackground()
             this.player.drawPlayer(this.framesCounter)
+            this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
+
 
             this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
 

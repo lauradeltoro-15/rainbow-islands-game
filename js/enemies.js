@@ -1,59 +1,80 @@
-class Character {
-    constructor(ctx, characterImgSrc, characterImgFrames, framesCounter, characterSizeW, characterSizeH, characterVelX, characterVelY) {
+class Enemie {
+    constructor(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX) {
+
         this.ctx = ctx
-        this.characterPosition = {
-            x: characterPositionx,
-            y: characterPositiony
+        this.enemiePosition = {
+            x: enemiePosX,
+            y: enemiePosY
         }
         this.basePosition = {
-            y: this.playerPosition.y
+            y: this.enemiePosition.y
         }
-        this.characterImg = {
+        this.enemieImg = {
             img: undefined,
-            src: characterImgSrc,
-            frames: characterImgFrames,
+            src: enemieImgSrc,
+            frames: enemieImgFrames,
             framesIndex: 0
         }
-        this.characterSize = {
-            w: characterSizeW,
-            h: characterSizeH,
+        this.enemieSize = {
+            w: enemieSizeW,
+            h: enemieSizeH,
         }
-        this.characterVelocity = {
-            x: characterVelX,
-            y: characterVelY
+        this.enemieVelocity = {
+            x: enemieVelX,
+            y: enemieVelY
+        }
+        this.rangeX = {
+            min: minX,
+            max: maxX
         }
 
     }
-    createImgCharacter() {
-        this.characterImg.img = new Image
-        this.characterImg.img.src = this.characterImg.src
-        this.drawCharacter()
+    createImgEnemie() {
+        this.enemieImg.img = new Image
+        this.enemieImg.img.src = this.enemieImg.src
     }
-    drawCharacter(framesCounter) {
+    drawEnemie(framesCounter) {
 
         this.ctx.drawImage(
-            this.characterImg.img,
-            this.characterImg.framesIndex * Math.floor(this.characterImg.img.width / this.characterImg.frames),
+            this.enemieImg.img,
+            this.enemieImg.framesIndex * Math.floor(this.enemieImg.img.width / this.enemieImg.frames),
             0,
-            Math.floor(this.characterImg.img.width / this.characterImg.frames),
-            this.characterImg.img.height,
-            this.characterPosition.x,
-            this.characterPosition.y,
-            this.characterSize.w,
-            this.characterSize.h
+            Math.floor(this.enemieImg.img.width / this.enemieImg.frames),
+            this.enemieImg.img.height,
+            this.enemiePosition.x,
+            this.enemiePosition.y,
+            this.enemieSize.w,
+            this.enemieSize.h
         )
     }
-    animateCharacter(framesCounter) {
-        framesCounter % 3 === 0 ? this.characterImg.framesIndex++ : null
-        this.characterImg.framesIndex > this.characterImg.frames - 1 ? this.characterImg.framesIndex = 0 : null
+    animateEnemie(framesCounter) {
+        framesCounter % 15 === 0 ? this.enemieImg.framesIndex++ : null
+        this.enemieImg.framesIndex > this.enemieImg.frames - 1 ? this.enemieImg.framesIndex = 0 : null
     }
 }
 
-class Enemie extends Character {
-    constructor(ctx, characterImgSrc, characterImgFrames, framesCounter, characterSizeW, characterSizeH, characterVelX, characterVelY) {
-        super(ctx, characterImgSrc, characterImgFrames, framesCounter, characterSizeW, characterSizeH, characterVelX, characterVelY)
 
 
+
+class FloorEnemie extends Enemie {
+    constructor(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX) {
+        super(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX)
+    }
+    move() {
+        console.log(this.enemiePosition.x,
+            this.enemieSize.w,
+            this.enemiePosition.x,
+            this.rangeX.min,
+            this.enemieVelocity.x
+
+        )
+        this.enemiePosition.x + this.enemieSize.w >= this.rangeX.max || this.enemiePosition.x <= this.rangeX.min ? this.enemieVelocity.x = -this.enemieVelocity.x : null
+        this.enemiePosition.x += this.enemieVelocity.x
+    }
+    drawFloorEnemie(framesCounter) {
+        this.drawEnemie()
+        this.animateEnemie(framesCounter)
+        this.move()
 
     }
 }
