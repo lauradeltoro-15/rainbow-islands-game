@@ -60,13 +60,6 @@ class Player {
             this.animatePlayer(framesCounter)
             this.aplyJumpGravity()
         }
-        // if (this.isConstructing) {
-        //     this.rainbowsConstructed[this.rainbowsConstructed.length - 1].drawRainbow()
-        //     if (this.rainbowsConstructed[this.rainbowsConstructed.length - 1].rainbowSize.w >= 150) {
-        //         this.isConstructing = false
-        //     }
-        // }
-
     }
     animatePlayer(framesCounter) {
         framesCounter % 3 === 0 ? this.playerImg.framesIndex++ : null
@@ -90,29 +83,16 @@ class Player {
             this.isJumping = false;
         }
     }
-    // createRainbow() {
-    //     this.rainbow.w += this.rainbow.grow
-
-
-
-    //     let rainbowItem
-    //     if (this.isFacingRight) {
-    //         this.ctx.fillRect(this.rainbow.position.x, this.rainbow.position.y, this.rainbow.w, this.rainbow.h)
-    //     }
-    //     if (this.rainbow.w >= 300) {
-
-    //         this.rainbows.push(this.rainbow)
-    //         this.isConstructing = false
-    //     }
-    // }
     setListeners() {
         document.addEventListener("keydown", e => {
             switch (e.keyCode) {
                 case this.keys.LEFT:
+                    this.isFacingRight = false
                     this.isMoving = true
                     this.move("left")
                     break;
                 case this.keys.RIGHT:
+                    this.isFacingRight = true
                     this.isMoving = true
                     this.move("right")
                     break;
