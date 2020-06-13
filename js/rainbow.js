@@ -38,7 +38,7 @@ class Rainbow {
             this.ctx.fillRect(
                 this.rainbowPosition.facingLeft.x - this.rainbowSize.w,
                 this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i,
-                this.rainbowSize.w,  
+                this.rainbowSize.w,
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }

@@ -26,11 +26,11 @@ class Player {
             h: 80,
         }
         this.playerVelocity = {
-            x: 5,
+            x: 15,
             y: 10
         }
         this.playerPhysics = {
-            gravity: 0.5
+            gravity: 0.3
         }
     }
     createImgPlayer() {
@@ -58,7 +58,7 @@ class Player {
         this.isMoving ? this.animatePlayer(framesCounter) : null
         if (this.isJumping) {
             this.animatePlayer(framesCounter)
-            this.aplyJumpGravity()
+            this.applyJumpGravity()
         }
     }
     animatePlayer(framesCounter) {
@@ -66,6 +66,7 @@ class Player {
         this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
     }
     move(direction) {
+        console.log("MOVING")
         if (direction === "left") {
             this.playerPosition.x -= this.playerVelocity.x
         }
@@ -73,7 +74,8 @@ class Player {
             this.playerPosition.x += this.playerVelocity.x
         }
     }
-    aplyJumpGravity() {
+    applyJumpGravity() {
+        console.log("JUMPING")
         this.playerPosition.y -= this.playerVelocity.y
         this.playerVelocity.y -= this.playerPhysics.gravity
         if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y) {
@@ -102,9 +104,7 @@ class Player {
                 case this.keys.XKey:
                     this.isConstructing = true
                     this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight))
-
                     break;
-
             }
         })
         document.addEventListener("keyup", e => {
