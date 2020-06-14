@@ -26,7 +26,6 @@ class Enemie {
             min: minX,
             max: maxX
         }
-
     }
     createImgEnemie() {
         this.enemieImg.img = new Image

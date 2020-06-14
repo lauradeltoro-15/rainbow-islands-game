@@ -61,7 +61,9 @@ const Game = {
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
-            console.log("Before colliding", this.player.playerPosition.x)
+
+
+            this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.isCollidingPlatfomrs(this.canvasSize.w / 20)
 
             this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
@@ -83,20 +85,28 @@ const Game = {
                 this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
             )
         })
-        // (rect1.x < rect2.x + rect2.width &&
-        //     rect1.x + rect1.width > rect2.x &&
-        //     rect1.y < rect2.y + rect2.height &&
-        //     rect1.y + rect1.height > rect2.y) 
     },
     isCollidingPlatfomrs(tSize) {
         this.map.layer.forEach((row, j) => row.forEach((col, i) => {
             if (col) {
                 if (
-                    this.player.playerPosition.x + this.player.playerSize.w >= tSize * i &&
+                    this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
                     this.player.playerPosition.y + this.player.playerSize.h >= -tSize * this.map.rows + j * tSize + this.canvasSize.h &&
+                    //is playery+height after the y tile ? 
                     this.player.playerPosition.x <= tSize * i + tSize &&
-                    this.player.playerPosition.y < -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize
-                ) console.log("collision with platform")
+                    //is playerPosition before tilepositionX + width?
+                    this.player.playerPosition.y < -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize / 10 - this.player.playerSize.w &&
+                    //is playerPosition before tilepositionX + height?
+                    this.player.isFalling
+                ) {
+                    this.player.playerPosition.y = -tSize * this.map.rows + j * tSize + this.canvasSize.h - this.player.playerSize.h
+                    this.player.playerImg.framesIndex = 0
+                    this.player.isJumping = false;
+                    this.player.jumpDirection = undefined
+                    this.player.playerVelocity.y = 10
+                    this.player.playerVelocity.x = 15
+
+                }
             }
         }))
     }

@@ -8,6 +8,7 @@
           this.jumpDirection = undefined
           this.isConstructing = false
           this.isFacingRight = true
+          this.isFalling = false
           this.rainbowsConstructed = []
 
           this.basePosition = {
@@ -32,7 +33,7 @@
               y: 10
           }
           this.playerPhysics = {
-              gravity: 0.3
+              gravity: 0.2
           }
       }
       createImgPlayer() {

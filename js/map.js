@@ -66,7 +66,7 @@ class Map {
         // this.mapToDraw.startRow = this.layer.length - Math.floor((camera.cameraPosition.y + camera.cameraSize.h) / this.tSize) //Obtiene la fila en la que debemos empezar
         // this.mapToDraw.endRow = this.layer.length - Math.floor(camera.cameraPosition.y / this.tSize) //Obtiene la última fila a dibujar
         // this.mapToDraw.offsetY = -camera.cameraPosition.y % this.tSize //La posición de la cámara puede no cuadrar exactamente con la cuadrícula del mapa, por eso hacemos el offset.
-        // for (let i = this.mapToDraw.startRow; i <= this.mapToDraw.endRow; i++) {
+        // for (let i = this.map ToDraw.startRow; i <= this.mapToDraw.endRow; i++) {
         //     this.mapToDraw.y = (i - this.mapToDraw.startRow) * this.tSize + this.mapToDraw.offsetY
         //     this.layer[i] ? this.layer[i].forEach((row, i) => {
         //         if (row) {
