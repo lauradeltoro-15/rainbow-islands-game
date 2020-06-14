@@ -20,6 +20,7 @@ const Game = {
     },
     background: undefined,
     player: undefined,
+    map: undefined,
     enemies: [],
     basePosition: {
         y: 200,
@@ -46,6 +47,8 @@ const Game = {
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg", this.basePosition.y)
+        this.map = new Map(16, 10, 100)
+        console.log(this.map.getTile(2, 0))
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
         this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, 400, 70, 70, 1, 1, this.canvasSize.w, 0))
 
