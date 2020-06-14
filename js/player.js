@@ -10,11 +10,11 @@
           this.isFacingRight = true
           this.rainbowsConstructed = []
           this.playerPosition = {
-              x: 50,
-              y: 500
+              x: this.canvasSize.w / 2,
+              y: YBasePosition
           }
           this.basePosition = {
-              y: this.playerPosition.y
+              y: YBasePosition
           }
           this.playerImg = {
               img: undefined,
@@ -23,8 +23,8 @@
               framesIndex: 0
           }
           this.playerSize = {
-              w: 80,
-              h: 80,
+              w: 120,
+              h: 120,
           }
           this.playerVelocity = {
               x: 15,
@@ -76,7 +76,6 @@
           }
       }
       applyJumpGravity() {
-          console.log(this.jumpDirection)
           this.jumpDirection === "right" ? this.playerPosition.x += this.playerVelocity.x / 5 : null
           this.jumpDirection === "left" ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
           this.playerPosition.y -= this.playerVelocity.y

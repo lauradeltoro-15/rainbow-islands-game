@@ -23,7 +23,7 @@ const Game = {
     map: undefined,
     enemies: [],
     basePosition: {
-        y: 200,
+        y: undefined,
         x: undefined
     },
 
@@ -39,6 +39,7 @@ const Game = {
     setDimensions() {
         this.canvasSize.w = window.innerWidth
         this.canvasSize.h = window.innerHeight
+        this.basePosition.y = 3 * (this.canvasSize.h / 4)
         this.canvasDom.setAttribute('width', this.canvasSize.w)
         this.canvasDom.setAttribute('height', this.canvasSize.h)
     },
@@ -47,9 +48,10 @@ const Game = {
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg", this.basePosition.y)
-        this.map = new Map(16, 10, 100)
-        console.log(this.map.getTile(2, 0))
+        this.map = new Map(this.ctx, 16, 10, 100)
+        this.camera = new Camera(this.map, this.canvasSize)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
+        this.camera.followCharacter(this.player)
         this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, 400, 70, 70, 1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
@@ -58,9 +60,10 @@ const Game = {
 
 
         this.intervalId = setInterval(() => {
-
             this.clearGame()
             this.background.drawBackground()
+            this.camera.update()
+            this.map.drawMap(this.camera)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
 
