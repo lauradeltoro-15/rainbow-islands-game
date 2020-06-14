@@ -1,11 +1,6 @@
 class Enemie {
     constructor(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX) {
-
         this.ctx = ctx
-        this.enemiePosition = {
-            x: enemiePosX,
-            y: enemiePosY
-        }
         // this.basePosition = {
         //     y: this.enemiePosition.y
         // }
@@ -18,6 +13,10 @@ class Enemie {
         this.enemieSize = {
             w: enemieSizeW,
             h: enemieSizeH,
+        }
+        this.enemiePosition = {
+            x: enemiePosX,
+            y: enemiePosY - this.enemieSize.h
         }
         this.enemieVelocity = {
             x: enemieVelX,
@@ -61,7 +60,6 @@ class FloorEnemie extends Enemie {
         super(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX)
     }
     move() {
-
         this.enemiePosition.x + this.enemieSize.w >= this.rangeX.max || this.enemiePosition.x <= this.rangeX.min ? this.enemieVelocity.x = -this.enemieVelocity.x : null
         this.enemiePosition.x += this.enemieVelocity.x
     }

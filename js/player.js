@@ -9,6 +9,7 @@
           this.isConstructing = false
           this.isFacingRight = true
           this.rainbowsConstructed = []
+
           this.basePosition = {
               y: YBasePosition
           }
@@ -79,9 +80,9 @@
           this.jumpDirection === "left" ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
           this.playerPosition.y -= this.playerVelocity.y
           this.playerVelocity.y -= this.playerPhysics.gravity
-          if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y) {
+          if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y - this.playerSize.h) {
               this.playerVelocity.y = 10
-              this.playerPosition.y = 3 * (this.canvasSize.h / 4) + this.playerPosition.x //tenía this.basePosition Y
+              this.playerPosition.y = this.basePosition.y - this.playerSize.h
               this.playerImg.framesIndex = 0
               this.isJumping = false;
               this.jumpDirection = undefined

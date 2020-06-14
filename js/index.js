@@ -7,10 +7,11 @@ const levelAudio = document.querySelector(".levelAudio")
 // window.addEventListener("load", () => {
 // introAudio.play()
 // })
+
+
 startButton.addEventListener("click", () => {
-    canvas.classList.add("start")
-    introAudio.pause()
     // levelAudio.play()
+    canvas.classList.add("start")
     gameInstructions.classList.add("inactive")
     Game.initGame('canvas')
 })
