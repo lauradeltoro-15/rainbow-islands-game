@@ -5,6 +5,7 @@
           this.keys = keys
           this.isMoving = false
           this.isJumping = false
+          this.jumpDirection = undefined
           this.isConstructing = false
           this.isFacingRight = true
           this.rainbowsConstructed = []
@@ -75,7 +76,9 @@
           }
       }
       applyJumpGravity() {
-          console.log("JUMPING")
+          console.log(this.jumpDirection)
+          this.jumpDirection === "right" ? this.playerPosition.x += this.playerVelocity.x / 5 : null
+          this.jumpDirection === "left" ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
           this.playerPosition.y -= this.playerVelocity.y
           this.playerVelocity.y -= this.playerPhysics.gravity
           if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y) {
@@ -83,6 +86,7 @@
               this.playerPosition.y = this.basePosition.y
               this.playerImg.framesIndex = 0
               this.isJumping = false;
+              this.jumpDirection = undefined
           }
       }
       setListeners() {
@@ -99,6 +103,11 @@
                       this.move("right")
                       break;
                   case this.keys.SPACE:
+                      if (this.isMoving && this.isFacingRight) {
+                          this.jumpDirection = "right"
+                      } else if (this.isMoving) {
+                          this.jumpDirection = "left"
+                      }
                       this.isJumping = true
                       break;
                   case this.keys.XKey:

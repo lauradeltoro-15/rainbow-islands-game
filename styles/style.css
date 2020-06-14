@@ -33,7 +33,14 @@ h2 {
     padding: 20px 50px;
     border: 3px solid #fe5340;
     background-color: #fe7f71;
-    color: white
+    color: white;
+    transition: all 0.5s;
+}
+
+.start-button:hover {
+    transform: scale(1.1);
+    color: white;
+    text-decoration: none;
 }
 
 .game-instructions.inactive {
