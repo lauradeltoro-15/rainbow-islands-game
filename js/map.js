@@ -17,7 +17,13 @@ class Map {
             [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 2, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0],
@@ -45,17 +51,17 @@ class Map {
         return this.layer[row][col] === 0 ? false : true
     }
     drawMap(camera) {
-        this.mapToDraw.startRow = Math.floor(camera.cameraPosition.y / this.tSize) //Obtiene la fila en la que debemos empezar
-        
-        this.mapToDraw.endRow = Math.floor(camera.cameraPosition.y + camera.cameraSize.h / this.tSize) //Obtiene la última fila a dibujar
+        this.mapToDraw.startRow = this.layer.length - Math.floor((camera.cameraPosition.y + camera.cameraSize.h) / this.tSize) //Obtiene la fila en la que debemos empezar
+        this.mapToDraw.endRow = this.layer.length - Math.floor(camera.cameraPosition.y / this.tSize) //Obtiene la última fila a dibujar
         this.mapToDraw.offsetY = -camera.cameraPosition.y % this.tSize //La posición de la cámara puede no cuadrar exactamente con la cuadrícula del mapa, por eso hacemos el offset.
+        console.log(camera.cameraPosition.y % this.tSize)
         for (let i = this.mapToDraw.startRow; i <= this.mapToDraw.endRow; i++) {
             this.mapToDraw.y = (i - this.mapToDraw.startRow) * this.tSize + this.mapToDraw.offsetY
-            this.layer[i].forEach((row, i) => {
+            this.layer[i] ? this.layer[i].forEach((row, i) => {
                 if (row) {
                     this.ctx.fillRect(i * this.tSize, this.mapToDraw.y, this.tSize, this.tSize)
                 }
-            })
+            }) : null
         }
 
 

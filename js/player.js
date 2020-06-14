@@ -67,7 +67,6 @@
           this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
       }
       move(direction) {
-          console.log("MOVING")
           if (direction === "left") {
               this.playerPosition.x -= this.playerVelocity.x
           }
