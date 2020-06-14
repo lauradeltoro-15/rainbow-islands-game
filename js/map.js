@@ -54,7 +54,6 @@ class Map {
         this.mapToDraw.startRow = this.layer.length - Math.floor((camera.cameraPosition.y + camera.cameraSize.h) / this.tSize) //Obtiene la fila en la que debemos empezar
         this.mapToDraw.endRow = this.layer.length - Math.floor(camera.cameraPosition.y / this.tSize) //Obtiene la última fila a dibujar
         this.mapToDraw.offsetY = -camera.cameraPosition.y % this.tSize //La posición de la cámara puede no cuadrar exactamente con la cuadrícula del mapa, por eso hacemos el offset.
-        console.log(camera.cameraPosition.y % this.tSize)
         for (let i = this.mapToDraw.startRow; i <= this.mapToDraw.endRow; i++) {
             this.mapToDraw.y = (i - this.mapToDraw.startRow) * this.tSize + this.mapToDraw.offsetY
             this.layer[i] ? this.layer[i].forEach((row, i) => {
@@ -79,16 +78,37 @@ class Camera {
             maxY: map.rows * map.tSize,
         }
     }
-    followCharacter(player) {
-        this.playerFollowed = player
-        player.screenY = 0
-    }
-    update() {
-        //La cámara estará en la parte inferior del canvas(a 1/4 del borde inferior)
-        this.playerFollowed.screenY = this.cameraSize.h / 3 * (this.cameraSize.h / 4)
+    update(basePosition) {
 
         //Que la cámara siga al personaje
-        this.cameraPosition.y = this.playerFollowed.playerPosition.y - 3 * (this.cameraSize.h / 4)
+        this.cameraPosition.y = basePosition - 3 * (this.cameraSize.h / 4)
     }
 
 }
+
+
+
+// class Camera {
+//     constructor(map, canvasSize) {
+//         this.cameraPosition = {
+//             y: 0
+//         }
+//         this.cameraSize = {
+//             w: canvasSize.w,
+//             h: canvasSize.h,
+//             maxY: map.rows * map.tSize,
+//         }
+//     }
+//     followCharacter(player) {
+//         this.playerFollowed = player
+//         player.screenY = 0
+//     }
+//     update() {
+//         //La cámara estará en la parte inferior del canvas(a 1/4 del borde inferior)
+//         this.playerFollowed.screenY = this.cameraSize.h / 3 * (this.cameraSize.h / 4)
+
+//         //Que la cámara siga al personaje
+//         this.cameraPosition.y = this.playerFollowed.playerPosition.y - 3 * (this.cameraSize.h / 4)
+//     }
+
+// }

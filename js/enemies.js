@@ -6,9 +6,9 @@ class Enemie {
             x: enemiePosX,
             y: enemiePosY
         }
-        this.basePosition = {
-            y: this.enemiePosition.y
-        }
+        // this.basePosition = {
+        //     y: this.enemiePosition.y
+        // }
         this.enemieImg = {
             img: undefined,
             src: enemieImgSrc,
@@ -61,6 +61,7 @@ class FloorEnemie extends Enemie {
         super(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX)
     }
     move() {
+
         this.enemiePosition.x + this.enemieSize.w >= this.rangeX.max || this.enemiePosition.x <= this.rangeX.min ? this.enemieVelocity.x = -this.enemieVelocity.x : null
         this.enemiePosition.x += this.enemieVelocity.x
     }

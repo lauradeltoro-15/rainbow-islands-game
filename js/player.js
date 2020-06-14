@@ -9,10 +9,6 @@
           this.isConstructing = false
           this.isFacingRight = true
           this.rainbowsConstructed = []
-          this.playerPosition = {
-              x: this.canvasSize.w / 2,
-              y: YBasePosition
-          }
           this.basePosition = {
               y: YBasePosition
           }
@@ -25,6 +21,10 @@
           this.playerSize = {
               w: 120,
               h: 120,
+          }
+          this.playerPosition = {
+              x: this.canvasSize.w / 2,
+              y: YBasePosition - this.playerSize.h
           }
           this.playerVelocity = {
               x: 15,
@@ -81,7 +81,7 @@
           this.playerVelocity.y -= this.playerPhysics.gravity
           if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y) {
               this.playerVelocity.y = 10
-              this.playerPosition.y = this.basePosition.y
+              this.playerPosition.y = 3 * (this.canvasSize.h / 4) + this.playerPosition.x //tenía this.basePosition Y
               this.playerImg.framesIndex = 0
               this.isJumping = false;
               this.jumpDirection = undefined
