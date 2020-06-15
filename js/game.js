@@ -5,7 +5,7 @@ const Game = {
     version: '1.0.0',
     canvasDom: undefined,
     ctx: undefined,
-    FPS: 60,
+    FPS: 20,
     intervalId: undefined,
     framesCounter: 0,
     canvasSize: {
@@ -62,7 +62,6 @@ const Game = {
             this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
 
-
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.isCollidingPlatfomrs(this.canvasSize.w / 20)
 
@@ -95,19 +94,47 @@ const Game = {
                     //is playery+height after the y tile ? 
                     this.player.playerPosition.x <= tSize * i + tSize &&
                     //is playerPosition before tilepositionX + width?
-                    this.player.playerPosition.y < -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize / 10 - this.player.playerSize.w &&
+                    this.player.playerPosition.y <= -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize / 10 - this.player.playerSize.w
                     //is playerPosition before tilepositionX + height?
-                    this.player.isFalling
-                ) {
-                    this.player.playerPosition.y = -tSize * this.map.rows + j * tSize + this.canvasSize.h - this.player.playerSize.h
-                    this.player.playerImg.framesIndex = 0
-                    this.player.isJumping = false;
-                    this.player.jumpDirection = undefined
-                    this.player.playerVelocity.y = 10
-                    this.player.playerVelocity.x = 15
 
+                ) {
+                    if (this.player.isFalling) {
+                        this.player.basePosition.y = -tSize * this.map.rows + j * tSize + this.canvasSize.h + 1
+                        this.player.playerImg.framesIndex = 0
+                        this.player.isJumping = false;
+                        this.player.jumpDirection = undefined
+                        this.player.playerVelocity.y = 10
+                        this.player.playerVelocity.x = 15
+                    }
                 }
             }
         }))
     }
 }
+
+
+
+
+// isCollidingPlatfomrs(tSize) {
+//     this.map.layer.forEach((row, j) => {
+//         if (row.some((col, i) => {
+//                 this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
+//                     this.player.playerPosition.y + this.player.playerSize.h >= -tSize * this.map.rows + j * tSize + this.canvasSize.h &&
+//                     //is playery+height after the y tile ? 
+//                     this.player.playerPosition.x <= tSize * i + tSize &&
+//                     //is playerPosition before tilepositionX + width?
+//                     this.player.playerPosition.y <= -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize / 10 - this.player.playerSize.w
+//                 //is playerPosition before tilepositionX + height?
+//             })) {
+//             if (this.player.isFalling) {
+//                 this.player.basePosition.y = -tSize * this.map.rows + j * tSize + this.canvasSize.h + 1
+//                 this.player.playerImg.framesIndex = 0
+//                 this.player.isJumping = false
+//                 this.player.jumpDirection = undefined
+//                 this.player.playerVelocity.y = 10
+//                 this.player.playerVelocity.x = 15
+//             }
+//         }
+//     })
+// }
+
