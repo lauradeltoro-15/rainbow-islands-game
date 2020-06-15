@@ -43,7 +43,7 @@
       }
       createImgPlayer() {
           this.setListeners()
-          this.playerImg.img = new Image
+          this.playerImg.img = new Image()
           this.playerImg.img.src = this.playerImg.src
           this.drawPlayer()
       }

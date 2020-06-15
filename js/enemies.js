@@ -28,7 +28,7 @@ class Enemie {
         }
     }
     createImgEnemie() {
-        this.enemieImg.img = new Image
+        this.enemieImg.img = new Image()
         this.enemieImg.img.src = this.enemieImg.src
     }
     drawEnemie(framesCounter) {

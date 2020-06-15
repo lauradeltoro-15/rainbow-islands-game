@@ -45,7 +45,7 @@ const Game = {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, 20, 40, this.canvasSize)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys)
-        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, 400, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, 1, 1, this.canvasSize.w, 0))
+        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 8, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, 1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
         this.player.createImgPlayer()
@@ -55,7 +55,7 @@ const Game = {
         this.intervalId = setInterval(() => {
             this.clearGame()
             this.background.drawBackground()
-            this.map.drawMap(this.player, this.framesCounter)
+            this.map.drawMap(this.player)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
@@ -85,22 +85,30 @@ const Game = {
 
 
     isCollidingPlatforms(tSize) {
+        let trace = ""
         if (!this.map.layer.some((row, j) => {
                 if (row.some((col, i) => {
-                            if (col &&
-                                this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
-                                this.player.playerPosition.y + this.player.playerSize.h >= this.map.getTileYAxis(j) &&
-                                //is playery+height after the y tile ? 
-                                this.player.playerPosition.x <= tSize * i + tSize &&
-                                //is playerPosition before tilepositionX + width?
-                                this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w)
-                            //is playerPosition before tilepositionX + height?
-                            {
-                                return true
-                            }
+                        if (col === 7 && j === 38) {
+                            trace += `1: ${this.player.playerPosition.x + this.player.playerSize.w >= tSize * i}, 
+                                2: ${this.player.playerPosition.y + this.player.playerSize.h >= this.map.getTileYAxis(j)}, 
+                                3: ${this.player.playerPosition.x <= tSize * i + tSize}
+                                4: ${this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w}, col:${col}  
+                                ${this.player.playerPosition.y}, ${this.player.playerSize.h}, ${this.map.getTileYAxis(j)}, 
+                                row: ${i}\n`
                         }
 
-                    )) {
+                        if (col &&
+                            this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
+                            this.player.playerPosition.y + this.player.playerSize.h + 5 >= this.map.getTileYAxis(j) /*.toFixed(6)*/ &&
+                            //is playery+height after the y tile ? 
+                            this.player.playerPosition.x <= tSize * i + tSize &&
+                            //is playerPosition before tilepositionX + width?
+                            this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w)
+                        //is playerPosition before tilepositionX + height?
+                        {
+                            return true
+                        }
+                    })) {
                     if (this.player.isFalling) {
                         this.player.basePosition.y = this.map.getTileYAxis(j)
                         this.setPlayerToStaticPosition()
@@ -110,19 +118,25 @@ const Game = {
                 }
             })) {
             if (!this.player.isJumping) {
+                console.log(`HIIII \n ${trace}`)
                 this.player.playerVelocity.y = -10
                 this.player.playerPosition.y -= this.player.playerVelocity.y
+                this.drawEnemiesWhenMoving()
+
             }
 
         }
     },
     setPlayerToStaticPosition() {
         this.player.playerImg.framesIndex = 0
-        this.player.isJumping = false;
+        this.player.isJumping = false
         this.player.jumpDirection = undefined
         this.player.playerVelocity.y = 10
         this.player.playerVelocity.x = 15
         this.player.isFacingRight ? this.player.playerImg.framesIndex = 8 : this.player.playerImg.framesIndex = 7
+    },
+    drawEnemiesWhenMoving() {
+        this.enemies.forEach(enem => enem.enemiePosition.y += 10)
     }
 
 }

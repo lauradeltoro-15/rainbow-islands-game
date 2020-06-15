@@ -73,7 +73,7 @@ class Map {
         return this.layer[row][col] === 0 ? false : true
     }
 
-    drawMap(player, framesCounter) {
+    drawMap(player) {
         if (player.playerPosition.y <= 300 && !player.isJumping) {
             this.mapToDraw.y += 10
             player.isJumping = false

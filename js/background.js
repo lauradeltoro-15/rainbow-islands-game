@@ -19,7 +19,7 @@ class Background {
         }
     }
     createBackground() {
-        this.backgroundImg = new Image
+        this.backgroundImg = new Image()
         this.backgroundImg.src = this.backgroundImgSrc
 
     }
