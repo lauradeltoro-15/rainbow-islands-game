@@ -18,7 +18,9 @@
               img: undefined,
               src: playerImgSrc,
               frames: playerImgFrames,
-              framesIndex: 0
+              framesIndex: 8,
+              leftSideIndex: 0,
+              rightSideIndex: 8
           }
           this.playerSize = {
               w: 120,
@@ -64,6 +66,15 @@
           }
       }
       animatePlayer(framesCounter) {
+          if (framesCounter % 3 === 0 && this.isFacingRight) {
+              this.playerImg.framesIndex < this.playerImg.rightSideIndex - 1 || this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = this.playerImg.rightSideIndex + 1 : this.playerImg.framesIndex++
+          } else if (framesCounter % 3 === 0 && !this.isFacingRight) {
+              this.playerImg.framesIndex >= this.playerImg.rightSideIndex ? this.playerImg.framesIndex = this.playerImg.leftSideIndex : this.playerImg.framesIndex++
+          }
+
+
+
+
           framesCounter % 3 === 0 ? this.playerImg.framesIndex++ : null
           this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
       }
@@ -118,12 +129,12 @@
           document.addEventListener("keyup", e => {
               switch (e.keyCode) {
                   case this.keys.LEFT:
-                      this.playerImg.framesIndex = 0
+                      this.playerImg.framesIndex = this.playerImg.leftSideIndex
                       this.isMoving = false
 
                       break;
                   case this.keys.RIGHT:
-                      this.playerImg.framesIndex = 0
+                      this.playerImg.framesIndex = this.playerImg.rightSideIndex
                       this.isMoving = false
                       break;
                   case this.keys.XKey:

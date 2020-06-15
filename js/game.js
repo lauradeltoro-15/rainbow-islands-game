@@ -44,9 +44,7 @@ const Game = {
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, 20, 40, this.canvasSize)
-        this.camera = new Camera(this.map, this.canvasSize)
-        this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
-        this.camera.followCharacter(this.player)
+        this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys)
         this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, 400, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, 1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
@@ -57,12 +55,10 @@ const Game = {
         this.intervalId = setInterval(() => {
             this.clearGame()
             this.background.drawBackground()
-            this.camera.update()
             this.map.drawMap(this.player, this.framesCounter)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
-
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.isCollidingPlatforms(this.canvasSize.w / 20)
 
@@ -112,7 +108,6 @@ const Game = {
                     return true
                 }
             })) {
-            console.log("notColliding")
             if (!this.player.isJumping) {
                 this.player.playerVelocity.y = -10
                 this.player.playerPosition.y -= this.player.playerVelocity.y

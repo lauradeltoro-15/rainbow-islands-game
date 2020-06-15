@@ -95,31 +95,3 @@ class Map {
 
 
 }
-
-
-class Camera {
-    constructor(map, canvasSize) {
-        this.cameraPosition = {
-            y: 0
-        }
-        this.cameraSize = {
-            w: canvasSize.w,
-            h: canvasSize.h,
-            maxY: map.rows * map.tSize,
-        }
-    }
-    followCharacter(player) {
-        this.playerFollowed = player
-        player.screenY = 0
-    }
-    update() {
-
-        //La cámara estará en la parte inferior del canvas(a 1/4 del borde inferior)
-        this.playerFollowed.screenY = this.cameraSize.h / 3 * (this.cameraSize.h / 4)
-
-        //Que la cámara siga al personaje
-        this.cameraPosition.y = this.playerFollowed.playerPosition.y - this.playerFollowed.playerSize.h
-
-    }
-
-}
