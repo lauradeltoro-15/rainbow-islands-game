@@ -43,7 +43,7 @@ const Game = {
 
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, 20, 20, this.canvasSize)
+        this.map = new Map(this.ctx, 20, 40, this.canvasSize)
         this.camera = new Camera(this.map, this.canvasSize)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running.png", 8, this.keys)
         this.camera.followCharacter(this.player)
@@ -93,11 +93,11 @@ const Game = {
                 if (row.some((col, i) => {
                             if (col &&
                                 this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
-                                this.player.playerPosition.y + this.player.playerSize.h >= -tSize * this.map.rows + j * tSize + this.canvasSize.h &&
+                                this.player.playerPosition.y + this.player.playerSize.h >= this.map.getTileYAxis(j) &&
                                 //is playery+height after the y tile ? 
                                 this.player.playerPosition.x <= tSize * i + tSize &&
                                 //is playerPosition before tilepositionX + width?
-                                this.player.playerPosition.y <= -tSize * this.map.rows + j * tSize + this.canvasSize.h + tSize / 10 - this.player.playerSize.w)
+                                this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w)
                             //is playerPosition before tilepositionX + height?
                             {
                                 return true
@@ -112,9 +112,9 @@ const Game = {
                     return true
                 }
             })) {
+            console.log("notColliding")
             if (!this.player.isJumping) {
-                this.player.playerVelocity.y = -4
-                this.player.playerVelocity.y -= 0.4
+                this.player.playerVelocity.y = -10
                 this.player.playerPosition.y -= this.player.playerVelocity.y
             }
 
