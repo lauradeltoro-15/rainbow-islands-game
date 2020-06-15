@@ -105,6 +105,7 @@ const Game = {
                         this.player.basePosition.y = this.map.getTileYAxis(j)
                         this.setPlayerToStaticPosition()
                     }
+
                     return true
                 }
             })) {
@@ -121,6 +122,7 @@ const Game = {
         this.player.jumpDirection = undefined
         this.player.playerVelocity.y = 10
         this.player.playerVelocity.x = 15
+        this.player.isFacingRight ? this.player.playerImg.framesIndex = 8 : this.player.playerImg.framesIndex = 7
     }
 
 }

@@ -3,14 +3,13 @@
           this.ctx = ctx
           this.canvasSize = canvasSize
           this.keys = keys
+          this.rainbowsConstructed = []
           this.isMoving = false
           this.isJumping = false
           this.jumpDirection = undefined
           this.isConstructing = false
           this.isFacingRight = true
           this.isFalling = false
-          this.rainbowsConstructed = []
-
           this.basePosition = {
               y: YBasePosition
           }
@@ -19,12 +18,16 @@
               src: playerImgSrc,
               frames: playerImgFrames,
               framesIndex: 8,
-              leftSideIndex: 0,
+              leftSideIndex: 7,
               rightSideIndex: 8
           }
           this.playerSize = {
-              w: 120,
-              h: 120,
+              w: 100,
+              h: 100,
+          }
+          this.range = {
+              max: this.canvasSize.w - this.playerSize.w,
+              min: 0
           }
           this.playerPosition = {
               x: this.canvasSize.w / 2,
@@ -67,34 +70,29 @@
       }
       animatePlayer(framesCounter) {
           if (framesCounter % 3 === 0 && this.isFacingRight) {
-              this.playerImg.framesIndex < this.playerImg.rightSideIndex - 1 || this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = this.playerImg.rightSideIndex + 1 : this.playerImg.framesIndex++
+              this.playerImg.framesIndex < this.playerImg.rightSideIndex - 1 || this.playerImg.framesIndex > this.playerImg.frames - 2 ? this.playerImg.framesIndex = this.playerImg.rightSideIndex + 1 : this.playerImg.framesIndex++
           } else if (framesCounter % 3 === 0 && !this.isFacingRight) {
-              this.playerImg.framesIndex >= this.playerImg.rightSideIndex ? this.playerImg.framesIndex = this.playerImg.leftSideIndex : this.playerImg.framesIndex++
+              this.playerImg.framesIndex > this.playerImg.leftSideIndex || this.playerImg.framesIndex === 0 ? this.playerImg.framesIndex = 7 : this.playerImg.framesIndex--
           }
-
-
-
-
-          framesCounter % 3 === 0 ? this.playerImg.framesIndex++ : null
-          this.playerImg.framesIndex > this.playerImg.frames - 1 ? this.playerImg.framesIndex = 0 : null
       }
       move(direction) {
           if (direction === "left") {
-              this.playerPosition.x -= this.playerVelocity.x
+              this.playerPosition.x > this.range.min ? this.playerPosition.x -= this.playerVelocity.x : null
           }
           if (direction === "right") {
-              this.playerPosition.x += this.playerVelocity.x
+              this.playerPosition.x < this.range.max ? this.playerPosition.x += this.playerVelocity.x : null
+
           }
       }
       applyJumpGravity() {
-          this.jumpDirection === "right" ? this.playerPosition.x += this.playerVelocity.x / 5 : null
-          this.jumpDirection === "left" ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
+          this.jumpDirection === "right" && this.playerPosition.x < this.range.max ? this.playerPosition.x += this.playerVelocity.x / 5 : null
+          this.jumpDirection === "left" && this.playerPosition.x > this.range.min ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
           this.playerPosition.y -= this.playerVelocity.y
           this.playerVelocity.y -= this.playerPhysics.gravity
           if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y - this.playerSize.h) {
               this.playerVelocity.y = 10
               this.playerPosition.y = this.basePosition.y - this.playerSize.h
-              this.playerImg.framesIndex = 0
+              console.log(this.isFacingRight)
               this.isJumping = false;
               this.jumpDirection = undefined
           }
