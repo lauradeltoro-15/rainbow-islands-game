@@ -8,7 +8,9 @@ class Map {
             offsetY: undefined,
             actualTile: undefined,
             filteredLayer: undefined,
-            y: undefined,
+            y: 0,
+            maxMovement: 500,
+            actualMovement: 0
         }
         this.cols = cols
         this.rows = rows
@@ -18,22 +20,23 @@ class Map {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 6],
+            [0, 0, 0, 0, 4, 5, 5, 5, 5, 5, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [4, 4, 5, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 5, 6, 6],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 4, 5, 5, 5, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+            [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
         ]
     }
     getCol(x) {
@@ -51,28 +54,23 @@ class Map {
         return this.layer[row][col] === 0 ? false : true
     }
 
-    drawMap(camera) {
-
-        this.layer.forEach((row, j) => row.forEach((col, i) => {
+    drawMap(player, framesCounter) {
+        this.layer.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
             if (col) {
+                if (player.playerPosition.y <= 100 && framesCounter % 4500 && !player.isJumping) {
+                    this.mapToDraw.y++
+                }
                 this.ctx.fillStyle = "#fe5340"
-                this.ctx.fillRect(this.tSize * i,
-                    -this.tSize * this.rows + j * this.tSize + this.canvasSize.h,
+                this.ctx.fillRect(this.tSize * colIndex,
+                    this.getTileYAxis(rowIndex),
+                    //Que empieze a dibujar en el punto más alto del mapa. 
                     this.tSize,
                     this.tSize)
             }
         }))
-
-        // this.mapToDraw.startRow = this.layer.length - Math.floor((camera.cameraPosition.y + camera.cameraSize.h) / this.tSize) //Obtiene la fila en la que debemos empezar
-        // this.mapToDraw.endRow = this.layer.length - Math.floor(camera.cameraPosition.y / this.tSize) //Obtiene la última fila a dibujar
-        // this.mapToDraw.offsetY = -camera.cameraPosition.y % this.tSize //La posición de la cámara puede no cuadrar exactamente con la cuadrícula del mapa, por eso hacemos el offset.
-        // for (let i = this.map ToDraw.startRow; i <= this.mapToDraw.endRow; i++) {
-        //     this.mapToDraw.y = (i - this.mapToDraw.startRow) * this.tSize + this.mapToDraw.offsetY
-        //     this.layer[i] ? this.layer[i].forEach((row, i) => {
-        //         if (row) {
-        //             this.ctx.fillRect(i * this.tSize, this.mapToDraw.y, this.tSize, this.tSize)
-        //         }
-        //     }) : null
+    }
+    getTileYAxis(tileIndex) {
+        return -this.tSize * this.rows + tileIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
     }
 
 

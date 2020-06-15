@@ -1,5 +1,5 @@
 class Background {
-    constructor(ctx, canvasSize, backgroundImgSrc, YBasePosition) {
+    constructor(ctx, canvasSize, backgroundImgSrc) {
         this.ctx = ctx
         this.canvasSize = canvasSize
         this.backgroundSize = {
@@ -13,10 +13,7 @@ class Background {
             x: 0,
             y: 0
         }
-        this.basePosition = {
-            y: YBasePosition
-        }
-        this.backgroundVel = { //Esto va a depender de la BASE-POSITION
+        this.backgroundVel = {
             x: 0,
             y: 3
         }
@@ -33,7 +30,6 @@ class Background {
     }
     moveBackground() {
         this.backgroundPosition.y >= this.canvasSize.h ? this.backgroundPosition.y = 0 : this.backgroundPosition.y = this.backgroundPosition.y + this.backgroundVel.y
-        //El cambio será en relación a la baseY 
 
     }
 }

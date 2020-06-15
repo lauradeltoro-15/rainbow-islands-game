@@ -43,7 +43,6 @@
           this.drawPlayer()
       }
       drawPlayer(framesCounter) {
-
           this.ctx.drawImage(
               this.playerImg.img,
               this.playerImg.framesIndex * Math.floor(this.playerImg.img.width / this.playerImg.frames),
