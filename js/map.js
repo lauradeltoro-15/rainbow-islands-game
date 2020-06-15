@@ -20,7 +20,6 @@ class Map {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 6],
@@ -57,9 +56,6 @@ class Map {
     drawMap(player, framesCounter) {
         this.layer.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
             if (col) {
-                if (player.playerPosition.y <= 100 && framesCounter % 4500 && !player.isJumping) {
-                    this.mapToDraw.y++
-                }
                 this.ctx.fillStyle = "#fe5340"
                 this.ctx.fillRect(this.tSize * colIndex,
                     this.getTileYAxis(rowIndex),
