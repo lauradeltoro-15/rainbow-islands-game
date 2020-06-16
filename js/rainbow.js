@@ -21,7 +21,7 @@ class Rainbow {
         }
         this.rainbowSize = {
             w: 0,
-            h: 45,
+            h: 65,
             maxW: 300
         }
         this.growVel = 5
