@@ -1,5 +1,5 @@
   class Player {
-      constructor(ctx, canvasSize, YBasePosition, playerImgSrc, playerImgFrames, keys, framesCounter) {
+      constructor(ctx, canvasSize, YBasePosition, playerImgSrc, playerImgFrames, keys) {
           this.ctx = ctx
           this.canvasSize = canvasSize
           this.keys = keys
@@ -47,7 +47,7 @@
           this.playerImg.img.src = this.playerImg.src
           this.drawPlayer()
       }
-      drawPlayer(framesCounter) {
+      drawPlayer(framesCounter, marginMap) {
           this.ctx.drawImage(
               this.playerImg.img,
               this.playerImg.framesIndex * Math.floor(this.playerImg.img.width / this.playerImg.frames),
@@ -58,9 +58,9 @@
               this.playerPosition.y,
               this.playerSize.w,
               this.playerSize.h
-          );
+          )
           this.rainbowsConstructed.forEach(elm => {
-              elm.drawRainbow()
+              elm.drawRainbow(marginMap)
           })
           this.isMoving ? this.animatePlayer(framesCounter) : null
           if (this.isJumping) {
@@ -90,12 +90,18 @@
           this.playerPosition.y -= this.playerVelocity.y
           this.playerVelocity.y -= this.playerPhysics.gravity
           if (this.playerPosition.y + this.playerVelocity.y >= this.basePosition.y - this.playerSize.h) {
-              this.playerVelocity.y = 10
               this.playerPosition.y = this.basePosition.y - this.playerSize.h
-              console.log(this.isFacingRight)
-              this.isJumping = false;
-              this.jumpDirection = undefined
+              this.setPlayerToStaticPosition()
           }
+      }
+
+      setPlayerToStaticPosition() {
+          this.playerImg.framesIndex = 0
+          this.isJumping = false
+          this.jumpDirection = undefined
+          this.playerVelocity.y = 10
+          this.playerVelocity.x = 15
+          this.isFacingRight ? this.playerImg.framesIndex = 8 : this.playerImg.framesIndex = 7
       }
       setListeners() {
           document.addEventListener("keydown", e => {

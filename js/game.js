@@ -51,7 +51,7 @@ const Game = {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys)
-        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 8, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, 1, 1, this.canvasSize.w, 0))
+        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 1, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, -1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
         this.player.createImgPlayer()
@@ -62,11 +62,12 @@ const Game = {
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
-            this.player.drawPlayer(this.framesCounter)
+            this.player.drawPlayer(this.framesCounter, this.map.mapToDraw.y)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
-            this.isCollidingPlatforms(this.canvasSize.w / 20)
+            this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
+            this.manageEnemiesCollisonWithPlatforms()
 
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
@@ -88,45 +89,6 @@ const Game = {
             )
         })
     },
-    isCollidingPlatforms(tSize) {
-        if (!this.map.layer.some((row, rowIndex) => {
-                if (row.some((col, colIndex) => {
-                        if (col &&
-                            this.isCharacterWidthAfterTileXOrigin(colIndex, this.player.playerPosition.x, this.player.playerSize.w) &&
-                            this.isCharacterHeightOverTileYOrigin(rowIndex, this.player.playerPosition.y, this.player.playerSize.h) &&
-                            this.isCharacterXOriginBeforeTileWidth(colIndex, this.player.playerPosition.x) &&
-                            this.isCharacterYOrigingOverTileYWidth(rowIndex, this.player.playerPosition.y, this.player.playerSize.h)) {
-                            return true
-                        }
-                    })) {
-                    if (this.player.isFalling) {
-                        this.player.basePosition.y = this.map.getTileYAxis(rowIndex)
-                        this.setPlayerToStaticPosition()
-                    }
-
-                    return true
-                }
-            })) {
-            if (!this.player.isJumping) {
-                this.player.playerVelocity.y = -10
-                this.player.playerPosition.y -= this.player.playerVelocity.y
-                this.drawEnemiesWhenMoving()
-
-            }
-
-        }
-    },
-    setPlayerToStaticPosition() {
-        this.player.playerImg.framesIndex = 0
-        this.player.isJumping = false
-        this.player.jumpDirection = undefined
-        this.player.playerVelocity.y = 10
-        this.player.playerVelocity.x = 15
-        this.player.isFacingRight ? this.player.playerImg.framesIndex = 8 : this.player.playerImg.framesIndex = 7
-    },
-    drawEnemiesWhenMoving() {
-        this.enemies.forEach(enem => enem.enemiePosition.y += 10)
-    },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
         return characterXPosition + characterWidth >= this.mapTSize * colIndex
     },
@@ -139,4 +101,56 @@ const Game = {
     isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
         return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
     },
+    isSomeTileColliding(row, rowIndex, characterPosition, characterSize) {
+        return row.some((col, colIndex) => {
+            return (
+                col &&
+                this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
+                this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
+                this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
+                this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
+            )
+
+        })
+    },
+    managePlayerCollisionWithPlatforms() {
+        if (!this.map.layer.some((row, rowIndex) => {
+                if (this.isSomeTileColliding(row, rowIndex, this.player.playerPosition, this.player.playerSize)) {
+                    if (this.player.isFalling) {
+                        this.player.basePosition.y = this.map.getTileYAxis(rowIndex)
+                        this.player.setPlayerToStaticPosition()
+                    }
+                    return true
+                }
+            })) {
+            if (!this.player.isJumping) {
+                this.player.playerVelocity.y = -10
+                this.player.playerPosition.y -= this.player.playerVelocity.y
+            }
+        }
+    },
+    manageEnemiesCollisonWithPlatforms() {
+        this.enemies.forEach(enem => {
+            if (!this.map.layer.some((row, rowIndex) => {
+                    if (this.isSomeTileColliding(row, rowIndex, enem.enemiePosition, enem.enemieSize)) {
+                        enem.enemieVelocity.y = 0
+                        enem.enemiePosition.y = this.map.getTileYAxis(rowIndex) - enem.enemieSize.h
+                        console.log(enem.enemiePosition.y)
+
+                    }
+                })) {
+                //if (this.isCharacterHeightOverTileYOrigin(rowIndex, enem.enemiePosition.y, enem.enemieSize.h)) {
+                enem.enemieVelocity.y = -6
+                enem.enemiePosition.y -= enem.enemieVelocity.y
+                //}
+
+                //Si no hay colisión, entonces haz Y Para este enemigo
+                //enem.enemieVelocity.x = -enem.enemieVelocity.x
+            }
+        })
+    },
+
+    drawEnemiesWhenMoving() {
+        this.enemies.forEach(enem => enem.enemiePosition.y += 10)
+    }
 }

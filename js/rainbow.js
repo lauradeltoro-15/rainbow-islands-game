@@ -15,49 +15,49 @@ class Rainbow {
         }
         this.rainbowSize = {
             w: 0,
-            h: 30,
-            maxW: 150
+            h: 40,
+            maxW: 250
         }
         this.growVel = 5
         this.isPlayerFacingRight = isPlayerFacingRight
         this.rainbowColors = ["#ff0000", "#ffa500", "#ffff00", "#008000", "#0000ff", "#4b0082", "#ee82ee"]
     }
-    createRightRainbow() {
+    createRightRainbow(mapMargin) {
         this.rainbowColors.forEach((elm, i) => {
             this.ctx.fillStyle = elm
             this.ctx.fillRect(
                 this.rainbowPosition.facingRigth.x,
-                this.rainbowPosition.facingRigth.y + (this.rainbowSize.h / this.rainbowColors.length) * i,
+                this.rainbowPosition.facingRigth.y + (this.rainbowSize.h / this.rainbowColors.length) * i - mapMargin,
                 this.rainbowSize.w,
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }
-    createLeftRainbow() {
+    createLeftRainbow(mapMargin) {
         this.rainbowColors.forEach((elm, i) => {
             this.ctx.fillStyle = elm
             this.ctx.fillRect(
                 this.rainbowPosition.facingLeft.x - this.rainbowSize.w,
-                this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i,
+                this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i - mapMargin,
                 this.rainbowSize.w,
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }
 
-    drawRainbow() {
+    drawRainbow(mapMargin) {
         if (this.isPlayerFacingRight) {
             if (this.rainbowSize.w >= this.rainbowSize.maxW) {
-                this.createRightRainbow()
+                this.createRightRainbow(mapMargin)
                 return
             }
             this.rainbowSize.w += this.growVel
-            this.createRightRainbow()
+            this.createRightRainbow(mapMargin)
         } else {
             if (this.rainbowSize.w >= this.rainbowSize.maxW) {
-                this.createLeftRainbow()
+                this.createLeftRainbow(mapMargin)
                 return
             }
             this.rainbowSize.w += this.growVel
-            this.createLeftRainbow()
+            this.createLeftRainbow(mapMargin)
 
         }
     }
