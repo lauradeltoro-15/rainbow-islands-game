@@ -69,7 +69,7 @@ const Game = {
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
-            console.log(this.isPlayerCollidingRainbows())
+            console.log(this.managePlayerRainbowCollisions())
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
         }, 1000 / this.FPS)
@@ -91,14 +91,21 @@ const Game = {
                 )
             } else if (rainbow.actualRainbowDirection === "left") {
                 return (
-                    this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x + 20 + rainbow.rainbowSize.w &&
+                    this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
                     this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingLeft.y &&
-                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x + rainbow.rainbowSize.w &&
+                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
                     this.player.playerPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
                 )
             }
 
         })
+    },
+    managePlayerRainbowCollisions() {
+        if (this.isPlayerCollidingRainbows()) {
+            if (this.player.isFalling) {
+                console.log("Colliding and falling")
+            }
+        }
     },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
         return characterXPosition + characterWidth >= this.mapTSize * colIndex
