@@ -52,8 +52,12 @@
       drawPlayer(framesCounter, higherPlayerPosition) {
           this.rainbowsConstructed.forEach(elm => {
               elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
-              if (framesCounter % 300 === 0) {
-                  this.rainbowsConstructed.shift()
+              elm.rainbowCounter++
+              if (elm.rainbowCounter >= 300) {
+                  elm.isErasing = true
+                  elm.rainbowSize.w -= 5
+                  elm.rainbowSize.w <= 10 ? this.rainbowsConstructed.shift() : null
+
               }
           })
           this.ctx.drawImage(

@@ -4,9 +4,11 @@ class Rainbow {
         this.playerPosition = playerPosition
         this.playerSize = playerSize
         this.actualRainbowDirection = actualRainbowDirection
+        this.isErasing = false
         this.rainbowToDraw = {
             y: 0
         }
+        this.rainbowCounter = 0
         this.rainbowPosition = {
             facingLeft: {
                 x: this.playerPosition.x,
@@ -49,14 +51,14 @@ class Rainbow {
     drawRainbow(higherPlayerPosition, player, cameraVelocity) {
         player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.moveDownRainbows(cameraVelocity) : null
         if (this.isPlayerFacingRight) {
-            if (this.rainbowSize.w >= this.rainbowSize.maxW) {
+            if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
                 this.createRightRainbow()
                 return
             }
             this.rainbowSize.w += this.growVel
             this.createRightRainbow()
         } else {
-            if (this.rainbowSize.w >= this.rainbowSize.maxW) {
+            if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
                 this.createLeftRainbow()
                 return
             }
