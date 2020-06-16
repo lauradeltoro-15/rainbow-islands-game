@@ -36,7 +36,7 @@
               y: YBasePosition - this.playerSize.h
           }
           this.playerVelocity = {
-              x: 15,
+              x: 20,
               y: 10
           }
           this.playerPhysics = {
@@ -50,6 +50,9 @@
           this.drawPlayer()
       }
       drawPlayer(framesCounter, higherPlayerPosition) {
+          this.rainbowsConstructed.forEach(elm => {
+              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
+          })
           this.ctx.drawImage(
               this.playerImg.img,
               this.playerImg.framesIndex * Math.floor(this.playerImg.img.width / this.playerImg.frames),
@@ -61,9 +64,6 @@
               this.playerSize.w,
               this.playerSize.h
           )
-          this.rainbowsConstructed.forEach(elm => {
-              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
-          })
           this.isMoving ? this.animatePlayer(framesCounter) : null
           if (this.isJumping) {
               this.animatePlayer(framesCounter)
@@ -98,7 +98,6 @@
       }
 
       setPlayerToStaticPosition() {
-          this.playerImg.framesIndex = 0
           this.isJumping = false
           this.jumpDirection = undefined
           this.playerVelocity.y = 10
@@ -130,7 +129,7 @@
                       this.isConstructing = true
                       this.isFacingRight ? this.actualRainbowDirection = "right" : this.actualRainbowDirection = "left"
                       this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight, this.actualRainbowDirection))
-                      
+
                       break;
               }
           })

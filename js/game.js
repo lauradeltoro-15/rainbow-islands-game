@@ -8,7 +8,8 @@ const Game = {
     FPS: 60,
     intervalId: undefined,
     framesCounter: 0,
-    maxFrames: 5000,
+    maxFrames: 20000,
+
     canvasSize: {
         w: undefined,
         h: undefined
@@ -27,7 +28,10 @@ const Game = {
     mapCols: 20,
     mapRows: 40,
     mapTSize: undefined,
+    actualRainbowCollissionY: undefined,
     enemies: [],
+    enemiesSources: ["images/floor-enemie-1.png", "images/floor-enemie-2.png"],
+    starterEnemieVel: [1, -1, 2, -2],
     basePosition: {
         y: undefined,
         x: undefined
@@ -50,9 +54,10 @@ const Game = {
 
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity)
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
+        this.map.createMapImage()
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
-        this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 1, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, -1, 1, this.canvasSize.w, 0))
+        //this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-2.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 1, 100, 90, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, -1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
         this.player.createImgPlayer()
@@ -63,13 +68,14 @@ const Game = {
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
+            this.generateRandomEnemie()
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
-            console.log(this.managePlayerRainbowCollisions())
+            this.managePlayerRainbowCollisions()
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
         }, 1000 / this.FPS)
@@ -83,19 +89,25 @@ const Game = {
     isPlayerCollidingRainbows() {
         return this.player.rainbowsConstructed.some(rainbow => {
             if (rainbow.actualRainbowDirection === "right") {
-                return (
+                if (
                     this.player.playerPosition.x + this.player.playerSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
                     this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingRigth.y &&
                     this.player.playerPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
                     this.player.playerPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowSize.h
-                )
+                ) {
+                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingRigth.y
+                    return true
+                }
             } else if (rainbow.actualRainbowDirection === "left") {
-                return (
+                if (
                     this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
                     this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingLeft.y &&
                     this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
                     this.player.playerPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
-                )
+                ) {
+                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingLeft.y
+                    return true
+                }
             }
 
         })
@@ -103,8 +115,15 @@ const Game = {
     managePlayerRainbowCollisions() {
         if (this.isPlayerCollidingRainbows()) {
             if (this.player.isFalling) {
-                console.log("Colliding and falling")
+                //console.log("playerPosition", this.player.playerPosition.y)
+                //console.log("where is supossed to be", this.actualRainbowCollissionY - this.player.playerSize.h)
+                this.player.basePosition = this.actualRainbowCollissionY
+                this.player.playerPosition.y = this.player.basePosition - this.player.playerSize.h - 10
+
+
             }
+        } else {
+
         }
     },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
@@ -160,20 +179,35 @@ const Game = {
             }
         })
     },
+    generateRandomEnemie() {
+        if (this.framesCounter % 300 === 0) {
+            this.enemies.push(new FloorEnemie(this.ctx,
+                this.enemiesSources[Math.floor(Math.random() * this.enemiesSources.length)],
+                2,
+                this.framesCounter,
+                Math.random() * (this.canvasSize.w - 150),
+                0,
+                100,
+                90,
+                this.starterEnemieVel[Math.floor(Math.random() * this.starterEnemieVel.length)],
+                1,
+                this.canvasSize.w,
+                0))
+            this.enemies.forEach(enem => enem.createImgEnemie())
+        }
+        this.enemies.forEach((enem, i) => {
+            enem.enemiePosition.y > this.canvasSize.w + 90 ? this.enemies.splice(i, 1) : null
+        })
+    },
+    isCollidingEnemies() {
+        return this.enemies.some(enem => {
+            return (
+                this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
+                this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
+                this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
+                this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
+            )
+        })
+    },
 
-    drawEnemiesWhenMoving() {
-        this.enemies.forEach(enem => enem.enemiePosition.y += 10)
-    }
 }
-
-
-// isCollidingEnemies() {
-//     return this.enemies.some(enem => {
-//         return (
-//             this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
-//             this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
-//             this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
-//             this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
-//         )
-//     })
-// },

@@ -15,7 +15,7 @@ class Background {
         }
         this.backgroundVel = {
             x: 0,
-            y: 3
+            y: 0.5
         }
     }
     createBackground() {

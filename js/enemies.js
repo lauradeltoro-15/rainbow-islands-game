@@ -31,8 +31,7 @@ class Enemie {
         this.enemieImg.img = new Image()
         this.enemieImg.img.src = this.enemieImg.src
     }
-    drawEnemie(framesCounter) {
-
+    drawEnemie() {
         this.ctx.drawImage(
             this.enemieImg.img,
             this.enemieImg.framesIndex * Math.floor(this.enemieImg.img.width / this.enemieImg.frames),
