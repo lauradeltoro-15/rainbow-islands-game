@@ -3,6 +3,10 @@ class Rainbow {
         this.ctx = ctx
         this.playerPosition = playerPosition
         this.playerSize = playerSize
+        this.rainbowPosition = {
+            x: 0,
+            y: 0
+        }
         this.rainbowToDraw = {
             y: 0
         }
@@ -38,18 +42,15 @@ class Rainbow {
     createLeftRainbow() {
         this.rainbowColors.forEach((elm, i) => {
             this.ctx.fillStyle = elm
-            this.ctx.fillRect(
-                this.rainbowPosition.facingLeft.x - this.rainbowSize.w,
-                this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i + this.rainbowToDraw.y,
-                this.rainbowSize.w,
-                this.rainbowSize.h / this.rainbowColors.length)
+            this.rainbowPosition.x = this.rainbowPosition.facingLeft.x - this.rainbowSize.w
+            this.rainbowPosition.y = this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i + this.rainbowToDraw.y,
+                this.ctx.fillRect(
+                    this.rainbowPosition.x,
+                    this.rainbowPosition.y,
+                    this.rainbowSize.w,
+                    this.rainbowSize.h / this.rainbowColors.length)
         });
     }
-    getColorYAxis(i) {
-
-    }
-
-
     drawRainbow(higherPlayerPosition, player, cameraVelocity) {
         player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.moveDownRainbows(cameraVelocity) : null
         if (this.isPlayerFacingRight) {

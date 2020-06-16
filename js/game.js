@@ -138,13 +138,8 @@ const Game = {
                         enem.enemiePosition.y = this.map.getTileYAxis(rowIndex) - enem.enemieSize.h
                     }
                 })) {
-                //if (this.isCharacterHeightOverTileYOrigin(rowIndex, enem.enemiePosition.y, enem.enemieSize.h)) {
                 enem.enemieVelocity.y = -6
                 enem.enemiePosition.y -= enem.enemieVelocity.y
-                //}
-
-                //Si no hay colisión, entonces haz Y Para este enemigo
-                //enem.enemieVelocity.x = -enem.enemieVelocity.x
             }
         })
     },
@@ -153,3 +148,15 @@ const Game = {
         this.enemies.forEach(enem => enem.enemiePosition.y += 10)
     }
 }
+
+
+// isCollidingEnemies() {
+//     return this.enemies.some(enem => {
+//         return (
+//             this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
+//             this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
+//             this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
+//             this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
+//         )
+//     })
+// },
