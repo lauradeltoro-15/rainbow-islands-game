@@ -88,27 +88,14 @@ const Game = {
             )
         })
     },
-    isPlayerWidthAfterTileXOrigin(colIndex) {
-        return this.player.playerPosition.x + this.player.playerSize.w >= this.mapTSize * colIndex
-    },
-    isPlayerHeightOverTileYOrigin(rowIndex) {
-        return this.player.playerPosition.y + this.player.playerSize.h + 5 >= this.map.getTileYAxis(rowIndex)
-    },
-    isPlayerXOriginBeforeTileWidth(colIndex) {
-        return this.player.playerPosition.x <= this.mapTSize * colIndex + this.mapTSize
-    },
-    isPlayerYOrigingOverTileYWidth(rowIndex) {
-        return this.player.playerPosition.y <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - this.player.playerSize.w
-    },
-
     isCollidingPlatforms(tSize) {
         if (!this.map.layer.some((row, rowIndex) => {
                 if (row.some((col, colIndex) => {
                         if (col &&
-                            this.isPlayerWidthAfterTileXOrigin(colIndex) &&
-                            this.isPlayerHeightOverTileYOrigin(rowIndex) &&
-                            this.isPlayerXOriginBeforeTileWidth(colIndex) &&
-                            this.isPlayerYOrigingOverTileYWidth(rowIndex)) {
+                            this.isCharacterWidthAfterTileXOrigin(colIndex, this.player.playerPosition.x, this.player.playerSize.w) &&
+                            this.isCharacterHeightOverTileYOrigin(rowIndex, this.player.playerPosition.y, this.player.playerSize.h) &&
+                            this.isCharacterXOriginBeforeTileWidth(colIndex, this.player.playerPosition.x) &&
+                            this.isCharacterYOrigingOverTileYWidth(rowIndex, this.player.playerPosition.y, this.player.playerSize.h)) {
                             return true
                         }
                     })) {
@@ -139,6 +126,17 @@ const Game = {
     },
     drawEnemiesWhenMoving() {
         this.enemies.forEach(enem => enem.enemiePosition.y += 10)
-    }
-
+    },
+    isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
+        return characterXPosition + characterWidth >= this.mapTSize * colIndex
+    },
+    isCharacterHeightOverTileYOrigin(rowIndex, characterPositionY, characterHeight) {
+        return characterPositionY + characterHeight + 5 >= this.map.getTileYAxis(rowIndex)
+    },
+    isCharacterXOriginBeforeTileWidth(colIndex, characterXPosition) {
+        return characterXPosition <= this.mapTSize * colIndex + this.mapTSize
+    },
+    isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
+        return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
+    },
 }
