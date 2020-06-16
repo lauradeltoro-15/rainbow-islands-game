@@ -1,20 +1,15 @@
 class Map {
-    constructor(ctx, cols, rows, canvasSize) {
+    constructor(ctx, cols, rows, mapTSize, canvasSize, higherPlayerPosition) {
         this.canvasSize = canvasSize
         this.ctx = ctx
         this.mapToDraw = {
-            startRow: undefined,
-            endRow: undefined,
-            offsetY: undefined,
-            actualTile: undefined,
-            filteredLayer: undefined,
             y: 0,
-            maxMovement: 500,
-            actualMovement: 0
+
         }
         this.cols = cols
         this.rows = rows
-        this.tSize = this.canvasSize.w / this.cols
+        this.tSize = mapTSize
+        this.higherPlayerPosition = higherPlayerPosition
         this.layer = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -58,40 +53,29 @@ class Map {
             [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
         ]
     }
-    getCol(x) {
-        return Math.floor(x / this.tSize)
-    }
-    getRow(y) {
-        return Math.floor(y / this.tSize)
-    }
-    getTile(col, row) {
+    isSolidTile(row, col) {
         return this.layer[row][col]
     }
-    isSolidTile(x, y) {
-        const col = this.getCol(x)
-        const row = this.getRow(y)
-        return this.layer[row][col] === 0 ? false : true
+    getTileYAxis(tileIndex) {
+        return -this.tSize * this.rows + tileIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
     }
-
+    getTileXAxis(colIndex) {
+        return this.tSize * colIndex
+    }
     drawMap(player) {
-        if (player.playerPosition.y <= 300 && !player.isJumping) {
+        if (player.playerPosition.y <= this.higherPlayerPosition && !player.isJumping) {
             this.mapToDraw.y += 10
             player.isJumping = false
         }
         this.layer.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
             if (col) {
                 this.ctx.fillStyle = "#fe5340"
-                this.ctx.fillRect(this.tSize * colIndex,
+                this.ctx.fillRect(
+                    this.getTileXAxis(colIndex),
                     this.getTileYAxis(rowIndex),
-                    //Que empieze a dibujar en el punto más alto del mapa. 
                     this.tSize,
                     this.tSize)
             }
         }))
     }
-    getTileYAxis(tileIndex) {
-        return -this.tSize * this.rows + tileIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
-    }
-
-
 }

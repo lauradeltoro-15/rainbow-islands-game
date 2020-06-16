@@ -8,6 +8,7 @@ const Game = {
     FPS: 60,
     intervalId: undefined,
     framesCounter: 0,
+    maxFrames: 5000,
     canvasSize: {
         w: undefined,
         h: undefined
@@ -20,7 +21,11 @@ const Game = {
     },
     background: undefined,
     player: undefined,
+    higherPlayerPosition: 300,
     map: undefined,
+    mapCols: 20,
+    mapRows: 40,
+    mapTSize: undefined,
     enemies: [],
     basePosition: {
         y: undefined,
@@ -36,20 +41,21 @@ const Game = {
     setDimensions() {
         this.canvasSize.w = window.innerWidth
         this.canvasSize.h = window.innerHeight
-        this.basePosition.y = this.canvasSize.h - (this.canvasSize.w / 20) * 2 //Hardcoded habrá que mirar cómo ponerlo mejor
+        this.mapTSize = this.canvasSize.w / this.mapCols
+        this.basePosition.y = this.canvasSize.h - this.mapTSize * 2
         this.canvasDom.setAttribute('width', this.canvasSize.w)
         this.canvasDom.setAttribute('height', this.canvasSize.h)
     },
 
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, 20, 40, this.canvasSize)
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys)
         this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 8, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, 1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
         this.player.createImgPlayer()
-        this.enemies.forEach(elm => elm.createImgEnemie())
+        this.enemies.forEach(enemie => enemie.createImgEnemie())
 
 
         this.intervalId = setInterval(() => {
@@ -57,12 +63,12 @@ const Game = {
             this.background.drawBackground()
             this.map.drawMap(this.player)
             this.player.drawPlayer(this.framesCounter)
-            this.enemies.forEach(elm => elm.drawFloorEnemie(this.framesCounter))
+            this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.isCollidingPlatforms(this.canvasSize.w / 20)
 
-            this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
+            this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
         }, 1000 / this.FPS)
     },
@@ -82,35 +88,32 @@ const Game = {
             )
         })
     },
-
+    isPlayerWidthAfterTileXOrigin(colIndex) {
+        return this.player.playerPosition.x + this.player.playerSize.w >= this.mapTSize * colIndex
+    },
+    isPlayerHeightOverTileYOrigin(rowIndex) {
+        return this.player.playerPosition.y + this.player.playerSize.h + 5 >= this.map.getTileYAxis(rowIndex)
+    },
+    isPlayerXOriginBeforeTileWidth(colIndex) {
+        return this.player.playerPosition.x <= this.mapTSize * colIndex + this.mapTSize
+    },
+    isPlayerYOrigingOverTileYWidth(rowIndex) {
+        return this.player.playerPosition.y <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - this.player.playerSize.w
+    },
 
     isCollidingPlatforms(tSize) {
-        let trace = ""
-        if (!this.map.layer.some((row, j) => {
-                if (row.some((col, i) => {
-                        if (col === 7 && j === 38) {
-                            trace += `1: ${this.player.playerPosition.x + this.player.playerSize.w >= tSize * i}, 
-                                2: ${this.player.playerPosition.y + this.player.playerSize.h >= this.map.getTileYAxis(j)}, 
-                                3: ${this.player.playerPosition.x <= tSize * i + tSize}
-                                4: ${this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w}, col:${col}  
-                                ${this.player.playerPosition.y}, ${this.player.playerSize.h}, ${this.map.getTileYAxis(j)}, 
-                                row: ${i}\n`
-                        }
-
+        if (!this.map.layer.some((row, rowIndex) => {
+                if (row.some((col, colIndex) => {
                         if (col &&
-                            this.player.playerPosition.x + this.player.playerSize.w >= tSize * i && //is playerx+width after the X tile ?  
-                            this.player.playerPosition.y + this.player.playerSize.h + 5 >= this.map.getTileYAxis(j) /*.toFixed(6)*/ &&
-                            //is playery+height after the y tile ? 
-                            this.player.playerPosition.x <= tSize * i + tSize &&
-                            //is playerPosition before tilepositionX + width?
-                            this.player.playerPosition.y <= this.map.getTileYAxis(j) + tSize / 10 - this.player.playerSize.w)
-                        //is playerPosition before tilepositionX + height?
-                        {
+                            this.isPlayerWidthAfterTileXOrigin(colIndex) &&
+                            this.isPlayerHeightOverTileYOrigin(rowIndex) &&
+                            this.isPlayerXOriginBeforeTileWidth(colIndex) &&
+                            this.isPlayerYOrigingOverTileYWidth(rowIndex)) {
                             return true
                         }
                     })) {
                     if (this.player.isFalling) {
-                        this.player.basePosition.y = this.map.getTileYAxis(j)
+                        this.player.basePosition.y = this.map.getTileYAxis(rowIndex)
                         this.setPlayerToStaticPosition()
                     }
 
@@ -118,7 +121,6 @@ const Game = {
                 }
             })) {
             if (!this.player.isJumping) {
-                console.log(`HIIII \n ${trace}`)
                 this.player.playerVelocity.y = -10
                 this.player.playerPosition.y -= this.player.playerVelocity.y
                 this.drawEnemiesWhenMoving()
