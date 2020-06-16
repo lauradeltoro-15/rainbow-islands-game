@@ -11,6 +11,7 @@
           this.isFacingRight = true
           this.isFalling = false
           this.cameraVelocity = cameraVelocity
+          this.actualRainbowDirection = undefined
           this.basePosition = {
               y: YBasePosition
           }
@@ -127,7 +128,9 @@
                       break;
                   case this.keys.XKey:
                       this.isConstructing = true
-                      this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight))
+                      this.isFacingRight ? this.actualRainbowDirection = "right" : this.actualRainbowDirection = "left"
+                      this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight, this.actualRainbowDirection))
+                      
                       break;
               }
           })

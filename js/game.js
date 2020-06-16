@@ -69,7 +69,7 @@ const Game = {
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
-
+            console.log(this.isPlayerCollidingRainbows())
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
         }, 1000 / this.FPS)
@@ -80,14 +80,24 @@ const Game = {
     clearGame() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
-    isCollidingEnemies() {
-        return this.enemies.some(enem => {
-            return (
-                this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
-                this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
-                this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
-                this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
-            )
+    isPlayerCollidingRainbows() {
+        return this.player.rainbowsConstructed.some(rainbow => {
+            if (rainbow.actualRainbowDirection === "right") {
+                return (
+                    this.player.playerPosition.x + this.player.playerSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
+                    this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingRigth.y &&
+                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
+                    this.player.playerPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowSize.h
+                )
+            } else if (rainbow.actualRainbowDirection === "left") {
+                return (
+                    this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x + 20 + rainbow.rainbowSize.w &&
+                    this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingLeft.y &&
+                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x + rainbow.rainbowSize.w &&
+                    this.player.playerPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
+                )
+            }
+
         })
     },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
