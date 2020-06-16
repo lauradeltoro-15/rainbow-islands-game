@@ -114,9 +114,10 @@ const Game = {
         })
     },
     manageEnemiesRainbowCollission() {
-        this.enemies.forEach(enem => {
+        this.enemies.forEach((enem, i) => {
             if (this.isCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
                 console.log("Colliding rainbow with enemie")
+                this.enemies.splice(i, 1)
             }
         })
 
