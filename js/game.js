@@ -19,6 +19,7 @@ const Game = {
         RIGHT: 39,
         XKey: 88
     },
+    cameraVelocity: 10,
     background: undefined,
     player: undefined,
     higherPlayerPosition: 300,
@@ -49,8 +50,8 @@ const Game = {
 
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition)
-        this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys)
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity)
+        this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
         this.enemies.push(new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.canvasSize.w / 20 * 1, 70, 70, 1, 1, this.canvasSize.w, 0), new FloorEnemie(this.ctx, "images/floor-enemie-1.png", 2, this.framesCounter, 400, this.basePosition.y, 70, 70, -1, 1, this.canvasSize.w, 0))
 
         this.background.createBackground()
@@ -62,7 +63,7 @@ const Game = {
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
-            this.player.drawPlayer(this.framesCounter, this.map.mapToDraw.y)
+            this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
             //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
@@ -124,7 +125,7 @@ const Game = {
                 }
             })) {
             if (!this.player.isJumping) {
-                this.player.playerVelocity.y = -10
+                this.player.playerVelocity.y = -this.cameraVelocity
                 this.player.playerPosition.y -= this.player.playerVelocity.y
             }
         }
@@ -135,8 +136,6 @@ const Game = {
                     if (this.isSomeTileColliding(row, rowIndex, enem.enemiePosition, enem.enemieSize)) {
                         enem.enemieVelocity.y = 0
                         enem.enemiePosition.y = this.map.getTileYAxis(rowIndex) - enem.enemieSize.h
-                        console.log(enem.enemiePosition.y)
-
                     }
                 })) {
                 //if (this.isCharacterHeightOverTileYOrigin(rowIndex, enem.enemiePosition.y, enem.enemieSize.h)) {

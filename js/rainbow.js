@@ -3,6 +3,9 @@ class Rainbow {
         this.ctx = ctx
         this.playerPosition = playerPosition
         this.playerSize = playerSize
+        this.rainbowToDraw = {
+            y: 0
+        }
         this.rainbowPosition = {
             facingLeft: {
                 x: this.playerPosition.x,
@@ -15,50 +18,58 @@ class Rainbow {
         }
         this.rainbowSize = {
             w: 0,
-            h: 40,
-            maxW: 250
+            h: 45,
+            maxW: 300
         }
         this.growVel = 5
         this.isPlayerFacingRight = isPlayerFacingRight
-        this.rainbowColors = ["#ff0000", "#ffa500", "#ffff00", "#008000", "#0000ff", "#4b0082", "#ee82ee"]
+        this.rainbowColors = ["#ED2224", "#EF4B26", "#F1772F", "#F9A23A", "#FBD11B", "#FFEB00", "#BFD721", "#91C73D", "#34A742", "#039453", "#1790A5", "##268AE2", "#2B5AB6", "#372D8D", "#4B2481"]
     }
-    createRightRainbow(mapMargin) {
+    createRightRainbow() {
         this.rainbowColors.forEach((elm, i) => {
             this.ctx.fillStyle = elm
             this.ctx.fillRect(
                 this.rainbowPosition.facingRigth.x,
-                this.rainbowPosition.facingRigth.y + (this.rainbowSize.h / this.rainbowColors.length) * i - mapMargin,
+                this.rainbowPosition.facingRigth.y + (this.rainbowSize.h / this.rainbowColors.length) * i + this.rainbowToDraw.y,
                 this.rainbowSize.w,
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }
-    createLeftRainbow(mapMargin) {
+    createLeftRainbow() {
         this.rainbowColors.forEach((elm, i) => {
             this.ctx.fillStyle = elm
             this.ctx.fillRect(
                 this.rainbowPosition.facingLeft.x - this.rainbowSize.w,
-                this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i - mapMargin,
+                this.rainbowPosition.facingLeft.y + (this.rainbowSize.h / this.rainbowColors.length) * i + this.rainbowToDraw.y,
                 this.rainbowSize.w,
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }
+    getColorYAxis(i) {
 
-    drawRainbow(mapMargin) {
+    }
+
+
+    drawRainbow(higherPlayerPosition, player, cameraVelocity) {
+        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.moveDownRainbows(cameraVelocity) : null
         if (this.isPlayerFacingRight) {
             if (this.rainbowSize.w >= this.rainbowSize.maxW) {
-                this.createRightRainbow(mapMargin)
+                this.createRightRainbow()
                 return
             }
             this.rainbowSize.w += this.growVel
-            this.createRightRainbow(mapMargin)
+            this.createRightRainbow()
         } else {
             if (this.rainbowSize.w >= this.rainbowSize.maxW) {
-                this.createLeftRainbow(mapMargin)
+                this.createLeftRainbow()
                 return
             }
             this.rainbowSize.w += this.growVel
-            this.createLeftRainbow(mapMargin)
+            this.createLeftRainbow()
 
         }
+    }
+    moveDownRainbows(cameraVelocity) {
+        this.rainbowToDraw.y += cameraVelocity
     }
 }

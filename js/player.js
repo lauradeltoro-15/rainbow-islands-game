@@ -1,5 +1,5 @@
   class Player {
-      constructor(ctx, canvasSize, YBasePosition, playerImgSrc, playerImgFrames, keys) {
+      constructor(ctx, canvasSize, YBasePosition, playerImgSrc, playerImgFrames, keys, cameraVelocity) {
           this.ctx = ctx
           this.canvasSize = canvasSize
           this.keys = keys
@@ -10,6 +10,7 @@
           this.isConstructing = false
           this.isFacingRight = true
           this.isFalling = false
+          this.cameraVelocity = cameraVelocity
           this.basePosition = {
               y: YBasePosition
           }
@@ -47,7 +48,7 @@
           this.playerImg.img.src = this.playerImg.src
           this.drawPlayer()
       }
-      drawPlayer(framesCounter, marginMap) {
+      drawPlayer(framesCounter, higherPlayerPosition) {
           this.ctx.drawImage(
               this.playerImg.img,
               this.playerImg.framesIndex * Math.floor(this.playerImg.img.width / this.playerImg.frames),
@@ -60,7 +61,7 @@
               this.playerSize.h
           )
           this.rainbowsConstructed.forEach(elm => {
-              elm.drawRainbow(marginMap)
+              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
           })
           this.isMoving ? this.animatePlayer(framesCounter) : null
           if (this.isJumping) {

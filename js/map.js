@@ -1,5 +1,5 @@
 class Map {
-    constructor(ctx, cols, rows, mapTSize, canvasSize, higherPlayerPosition) {
+    constructor(ctx, cols, rows, mapTSize, canvasSize, higherPlayerPosition, cameraVelocity) {
         this.canvasSize = canvasSize
         this.ctx = ctx
         this.mapToDraw = {
@@ -10,6 +10,7 @@ class Map {
         this.rows = rows
         this.tSize = mapTSize
         this.higherPlayerPosition = higherPlayerPosition
+        this.cameraVelocity = cameraVelocity
         this.layer = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
