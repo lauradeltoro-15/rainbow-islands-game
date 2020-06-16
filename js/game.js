@@ -75,7 +75,8 @@ const Game = {
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
-            this.managePlayerRainbowCollisions()
+            this.managePlayerRainbowCollissions()
+            this.manageEnemiesRainbowCollission()
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
 
         }, 1000 / this.FPS)
@@ -86,24 +87,24 @@ const Game = {
     clearGame() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
-    isPlayerCollidingRainbows() {
+    isCollidingRainbows(characterPosition, characterSize) {
         return this.player.rainbowsConstructed.some(rainbow => {
             if (rainbow.actualRainbowDirection === "right") {
                 if (
-                    this.player.playerPosition.x + this.player.playerSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
-                    this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingRigth.y &&
-                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
-                    this.player.playerPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowSize.h
+                    characterPosition.x + characterSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
+                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingRigth.y &&
+                    characterPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
+                    characterPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowSize.h
                 ) {
                     this.actualRainbowCollissionY = rainbow.rainbowPosition.facingRigth.y
                     return true
                 }
             } else if (rainbow.actualRainbowDirection === "left") {
                 if (
-                    this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
-                    this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingLeft.y &&
-                    this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
-                    this.player.playerPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
+                    characterPosition.x + characterSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
+                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingLeft.y &&
+                    characterPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
+                    characterPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
                 ) {
                     this.actualRainbowCollissionY = rainbow.rainbowPosition.facingLeft.y
                     return true
@@ -112,9 +113,18 @@ const Game = {
 
         })
     },
-    managePlayerRainbowCollisions() {
-        if (this.isPlayerCollidingRainbows()) {
+    manageEnemiesRainbowCollission() {
+        this.enemies.forEach(enem => {
+            if (this.isCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
+                console.log("Colliding rainbow with enemie")
+            }
+        })
+
+    },
+    managePlayerRainbowCollissions() {
+        if (this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
             if (this.player.isFalling) {
+                console.log("colliding and falling")
                 //console.log("playerPosition", this.player.playerPosition.y)
                 //console.log("where is supossed to be", this.actualRainbowCollissionY - this.player.playerSize.h)
                 this.player.basePosition = this.actualRainbowCollissionY
@@ -211,3 +221,31 @@ const Game = {
     },
 
 }
+
+
+
+// isPlayerCollidingRainbows() {
+//     return this.player.rainbowsConstructed.some(rainbow => {
+//         if (rainbow.actualRainbowDirection === "right") {
+//             if (
+//                 this.player.playerPosition.x + this.player.playerSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
+//                 this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingRigth.y &&
+//                 this.player.playerPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
+//                 this.player.playerPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowSize.h
+//             ) {
+//                 this.actualRainbowCollissionY = rainbow.rainbowPosition.facingRigth.y
+//                 return true
+//             }
+//         } else if (rainbow.actualRainbowDirection === "left") {
+//             if (
+//                 this.player.playerPosition.x + this.player.playerSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
+//                 this.player.playerPosition.y + this.player.playerSize.h >= rainbow.rainbowPosition.facingLeft.y &&
+//                 this.player.playerPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
+//                 this.player.playerPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowSize.h
+//             ) {
+//                 this.actualRainbowCollissionY = rainbow.rainbowPosition.facingLeft.y
+//                 return true
+//             }
+//         }
+
+//     })
