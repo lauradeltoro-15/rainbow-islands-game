@@ -151,25 +151,41 @@ const Game = {
     },
 
     managePlayerCollisionWithPlatforms() {
-        if (!this.map.layer.some((row, rowIndex) => {
-                if (this.isSomeTileColliding(row, rowIndex, this.player.playerPosition, this.player.playerSize)) {
-                    if (this.player.isFalling) {
-                        this.player.basePosition.y = this.map.getTileYAxis(rowIndex)
-                        this.player.setPlayerToStaticPosition()
-                    }
-                    return true
-                }
-            })) {
+        const collidingTile = this.getCollidingTile(this.player.playerPosition, this.player.playerSize)
+        if (collidingTile) {
+            if (this.player.isFalling) {
+                this.player.basePosition.y = collidingTile
+                this.player.setPlayerToStaticPosition()
+            }
+        } else {
             if (!this.player.isJumping && !this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
                 this.player.playerVelocity.y = -this.cameraVelocity
                 this.player.playerPosition.y -= this.player.playerVelocity.y
             }
         }
+
+    },
+    getCollidingTile(characterPosition, characterSize) {
+        let tileYAxis;
+        this.map.layer.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if (
+                    col &&
+                    this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
+                    this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
+                    this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
+                    this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
+                ) {
+                    tileYAxis = this.map.getTileYAxis(rowIndex)
+                }
+            })
+        })
+        return tileYAxis
     },
     manageEnemiesCollisonWithPlatforms() {
         this.enemies.forEach(enem => {
             if (!this.map.layer.some((row, rowIndex) => {
-                    if (this.isSomeTileColliding(row, rowIndex, enem.enemiePosition, enem.enemieSize)) {
+                    if (this.getCollidingTile(row, rowIndex, enem.enemiePosition, enem.enemieSize)) {
                         enem.enemieVelocity.y = 0
                         enem.enemiePosition.y = this.map.getTileYAxis(rowIndex) - enem.enemieSize.h
                     }
@@ -229,18 +245,7 @@ const Game = {
     isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
         return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
     },
-    isSomeTileColliding(row, rowIndex, characterPosition, characterSize) {
-        return row.some((col, colIndex) => {
-            return (
-                col &&
-                this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
-                this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
-                this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
-                this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
-            )
 
-        })
-    },
     createGameInfoBoxes() {
         this.scoreImg = new Image()
         this.scoreImg.src = this.scoreBackgroundSource
