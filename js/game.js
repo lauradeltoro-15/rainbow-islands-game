@@ -15,6 +15,16 @@ const Game = {
         w: undefined,
         h: undefined
     },
+    scoreImg: {
+        img: undefined,
+        source: "images/score.png",
+        h: 60,
+        wLeft: 300,
+        wRight: 350,
+        y: undefined,
+        xLeft: 80,
+        xRight: undefined
+    },
     keys: {
         SPACE: 32,
         LEFT: 37,
@@ -34,6 +44,7 @@ const Game = {
     enemiesSources: ["images/floor-enemie-1.png", "images/floor-enemie-2.png"],
     starterEnemieVel: [1, -1, 2, -2],
     enemiesCollisionRetarder: 0,
+    chest: undefined,
     basePosition: {
         y: undefined,
         x: undefined
@@ -57,20 +68,28 @@ const Game = {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
+        this.chest = new Chest(this.ctx, this.canvasSize, 200, 250, this.map)
 
         this.background.createBackground()
         this.map.createMapImage()
         this.player.createImgPlayer()
         this.player.createImgHeart()
         this.createScoreImg()
+        this.chest.createChest()
+
+
 
         this.intervalId = setInterval(() => {
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
+            this.chest.getChestY()
+            this.chest.drawChest()
             this.drawRandomEnemie()
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
+
+            this.hasPlayerWin ? this.manageWinner() : null
 
 
             this.isCollidingEnemies()
@@ -243,7 +262,7 @@ const Game = {
         )
         this.ctx.drawImage(
             this.scoreImg,
-            380 - 300,
+            80,
             this.canvasSize.h - 107,
             300,
             60
@@ -251,6 +270,15 @@ const Game = {
         this.ctx.fillStyle = "#64571a"
         this.ctx.font = "18px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
+    },
+    hasPlayerWin() {
+        return (this.player.playerPosition.y + this.player.playerSize.h <= this.chest.chestPosition.y + this.chest.chestSize.h)
+    },
+    manageWinner() {
+        if (this.hasPlayerWin()) {
+            this.chest.manageChestAnimation(this.framesCounter)
+
+        }
     }
 
 }

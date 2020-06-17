@@ -44,7 +44,6 @@ class Map {
             [7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 8, 8, 8, 9],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-
             [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -67,8 +66,8 @@ class Map {
     isSolidTile(row, col) {
         return this.layer[row][col]
     }
-    getTileYAxis(tileIndex) {
-        return -this.tSize * this.rows + tileIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
+    getTileYAxis(rowIndex) {
+        return -this.tSize * this.rows + rowIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
     }
     getTileXAxis(colIndex) {
         return this.tSize * colIndex
