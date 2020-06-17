@@ -59,19 +59,23 @@ const Game = {
         this.ctx = this.canvasDom.getContext('2d')
         this.resetValues()
         this.startGame()
+
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png")
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png", this.framesCounter)
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
         this.chest = new Chest(this.ctx, this.canvasSize, 200, 250, this.map)
         this.winMessage = new WinMessage(this.ctx, this.canvasSize, 70, 600, this.map)
 
+
         this.background.createBackground()
         this.map.createMapImage()
+        this.map.createMapCoinImage()
         this.player.createImgPlayer()
         this.createImgHeart()
         this.createGameInfoBoxes()
+
         this.chest.createChest()
         this.winMessage.createWinMessage()
 
@@ -80,11 +84,13 @@ const Game = {
             this.background.drawBackground()
             this.isPlayerAtTopOfScreen() ? this.map.setOffsetInMap(this.player) : null
             this.map.drawMap(this.player)
+            this.map.animateMapCoin()
             this.chest.setChestY()
             this.chest.drawChest()
             this.player.controlRainbows(this.higherPlayerPosition)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
+
             this.eraseEnemies()
             this.drawGameInfoBoxes()
             this.drawLives()
@@ -98,7 +104,8 @@ const Game = {
             this.player.isFalling = this.player.playerVelocity.y < 0 ? true : false
 
             this.managePlayerCollisionWithPlatforms()
-            this.manageEnemiesCollisonWithPlatforms()
+            this.managePlayerCollisionWithMapCoins()
+            this.manageEnemiesCollissionWithPlatforms()
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
 
@@ -126,7 +133,7 @@ const Game = {
         }
 
     },
-    manageEnemiesCollisonWithPlatforms() {
+    manageEnemiesCollissionWithPlatforms() {
         this.enemies.forEach(enem => {
             const collidingTile = this.getCollidingTile(enem.enemiePosition, enem.enemieSize)
             if (collidingTile) {
@@ -138,22 +145,44 @@ const Game = {
             }
         })
     },
+    managePlayerCollisionWithMapCoins() {
+        const coinValues = this.getCollidingCoinMap(this.player.playerPosition, this.player.playerSize)
+        if (coinValues) {
+            this.map.layer[coinValues.row][coinValues.col] = 0
+            this.score += 100
+        }
+    },
     getCollidingTile(characterPosition, characterSize) {
         let tileYAxis;
         this.map.layer.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
-                if (
-                    col &&
-                    this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
-                    this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
-                    this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
-                    this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
-                ) {
-                    tileYAxis = this.map.getTileYAxis(rowIndex)
-                }
+                col !== 1 && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col) ? tileYAxis = this.map.getTileYAxis(rowIndex) : null
             })
         })
         return tileYAxis
+    },
+    getCollidingCoinMap(characterPosition, characterSize) {
+        let coinValues;
+        this.map.layer.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if (col === 1 && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col)) {
+                    coinValues = {row: rowIndex, col: colIndex}
+                    console.log(coinValues)
+                }
+            })
+        })
+        return coinValues
+    },
+    isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col) {
+        return (
+            (
+                col &&
+                this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
+                this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
+                this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
+                this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
+            )
+        )
     },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
         return characterXPosition + characterWidth >= this.mapTSize * colIndex
@@ -171,7 +200,7 @@ const Game = {
         this.enemies.forEach((enem, i) => {
             if (this.getCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
                 this.enemies.splice(i, 1)
-                this.score += 100
+                this.score += 50
             }
         })
     },
@@ -343,4 +372,5 @@ const Game = {
     isPlayerAtTopOfScreen() {
         return this.player.playerPosition.y <= this.higherPlayerPosition && !this.player.isJumping
     }
+
 }

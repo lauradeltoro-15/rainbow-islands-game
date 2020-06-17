@@ -1,13 +1,12 @@
-class Coins {
-    constructor(x, y) {
+class Coin {
+    constructor(ctx, framesCounter) {
+        this.ctx = ctx
+        this.framesCounter = framesCounter
         this.coinSize = {
             w: 50,
-            h: 50
+            h: 150
         }
-        this.coinPosition = {
-            x: x,
-            y: y
-        }
+
         this.coinImg = {
             img: undefined,
             source: "images/coin.png",
@@ -15,25 +14,26 @@ class Coins {
             framesIndex: 0
         }
     }
-    createCoin() {
+    createImgCoin() {
         this.coinImg.img = new Image()
         this.coinImg.img.src = this.coinImg.source
     }
-    drawCoin() {
+    drawCoin(xPosition, yPosition) {
         this.ctx.drawImage(
             this.coinImg.img,
             this.coinImg.framesIndex * Math.floor(this.coinImg.img.width / this.coinImg.frames),
             0,
             Math.floor(this.coinImg.img.width / this.coinImg.frames),
             this.coinImg.img.height,
-            this.coinPosition.x,
-            this.coinPosition.y,
+            xPosition,
+            yPosition,
             this.coinSize.w,
             this.coinSize.h
         )
+        this.animateCoin()
     }
-    animateCoin(framesCounter) {
-        framesCounter % 10 === 0 ? this.coinImg.framesIndex++ : null
+    animateCoin() {
+        this.framesCounter % 30 === 0 ? this.coinImg.framesIndex++ : null
         this.coinImg.framesIndex > this.coinImg.frames - 1 ? this.coinImg.framesIndex = 0 : null
     }
 }
