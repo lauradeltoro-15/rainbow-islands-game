@@ -38,5 +38,6 @@ class WinMessage {
         this.winMsgPosition.y <= this.map.getTileYAxis(4) - this.winMsgSize.h ? this.winMsgPosition.y += 2 : null
 
     }
+    
 
 }

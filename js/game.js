@@ -47,6 +47,7 @@ const Game = {
     enemiesCollisionRetarder: 0,
     chest: undefined,
     winMessage: undefined,
+    winnerTimeOut: 300,
     basePosition: {
         y: undefined,
         x: undefined
@@ -95,7 +96,8 @@ const Game = {
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
-            this.hasPlayerWin() ? this.manageWinner() : null!this.player.isAlive() ? this.manageLoser() : null
+            this.hasPlayerWin() ? this.manageWinner() : null;
+            !this.player.isAlive() ? this.manageLoser() : null
 
 
 
@@ -287,7 +289,14 @@ const Game = {
             this.chest.manageChestAnimation(this.framesCounter)
             this.winMessage.drawWinMessage()
             this.winMessage.animateWinMessage()
+            this.manageWinnerTimeOutMenu()
         }
+    },
+    retardWinnerMenu() {
+        this.winnerTimeOut--
+    },
+    manageWinnerTimeOutMenu() {
+        this.winnerTimeOut <= 0 ? document.querySelector(".end-message.winner").classList.remove("inactive") : this.retardWinnerMenu()
     },
     manageLoser() {
         this.endGame()
@@ -297,6 +306,7 @@ const Game = {
         this.enemies.splice(0, this.enemies.length)
         this.score = 0
         this.isPlaying = true
+        this.winnerTimeOut = 300
 
     }
 }
