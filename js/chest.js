@@ -26,7 +26,7 @@ class Chest {
         this.chestImg.img.src = this.chestImg.source
     }
     drawChest() {
-        console.log(this.chestPosition.y)
+       
         this.ctx.drawImage(
             this.chestImg.img,
             this.chestImg.framesIndex * Math.floor(this.chestImg.img.width / this.chestImg.frames),
@@ -44,6 +44,7 @@ class Chest {
         this.chestImg.framesIndex > this.chestImg.frames - 1 ? this.chestImg.framesIndex = this.chestImg.frames - 1 : null
     }
     manageChestAnimation(framesCounter){
+    
         this.animateChest(framesCounter)
     }
 

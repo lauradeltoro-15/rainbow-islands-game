@@ -10,6 +10,7 @@ const Game = {
     framesCounter: 0,
     maxFrames: 5000,
     score: 0,
+    isPlaying: true,
     scoreBackgroundSource: "images/score.png",
     canvasSize: {
         w: undefined,
@@ -45,6 +46,7 @@ const Game = {
     starterEnemieVel: [1, -1, 2, -2],
     enemiesCollisionRetarder: 0,
     chest: undefined,
+    winMessage: undefined,
     basePosition: {
         y: undefined,
         x: undefined
@@ -69,6 +71,7 @@ const Game = {
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
         this.chest = new Chest(this.ctx, this.canvasSize, 200, 250, this.map)
+        this.winMessage = new WinMessage(this.ctx, this.canvasSize, 70, 600, this.map)
 
         this.background.createBackground()
         this.map.createMapImage()
@@ -76,16 +79,18 @@ const Game = {
         this.player.createImgHeart()
         this.createScoreImg()
         this.chest.createChest()
+        this.winMessage.createWinMessage()
 
 
 
         this.intervalId = setInterval(() => {
+            console.log(this.enemies)
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
             this.chest.getChestY()
             this.chest.drawChest()
-            this.drawRandomEnemie()
+            this.isPlaying ? this.createRandomEnemie() : null
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
@@ -184,7 +189,7 @@ const Game = {
             }
         })
     },
-    drawRandomEnemie() {
+    createRandomEnemie() {
         if (this.framesCounter % 300 === 0) {
             this.enemies.push(new FloorEnemie(this.ctx,
                 this.enemiesSources[Math.floor(Math.random() * this.enemiesSources.length)],
@@ -276,8 +281,10 @@ const Game = {
     },
     manageWinner() {
         if (this.hasPlayerWin()) {
+            this.isPlaying = false
             this.chest.manageChestAnimation(this.framesCounter)
-
+            this.winMessage.drawWinMessage()
+            this.winMessage.animateWinMessage()
         }
     }
 
