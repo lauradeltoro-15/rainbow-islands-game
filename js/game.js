@@ -10,6 +10,7 @@ const Game = {
     framesCounter: 0,
     maxFrames: 5000,
     score: 0,
+    scoreBackgroundSource: "images/score.png",
     canvasSize: {
         w: undefined,
         h: undefined
@@ -61,6 +62,7 @@ const Game = {
         this.map.createMapImage()
         this.player.createImgPlayer()
         this.player.createImgHeart()
+        this.createScoreImg()
 
         this.intervalId = setInterval(() => {
             this.clearGame()
@@ -69,7 +71,7 @@ const Game = {
             this.drawRandomEnemie()
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
-            this.player.drawLives()
+
 
             this.isCollidingEnemies()
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
@@ -78,6 +80,7 @@ const Game = {
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
             this.manageScore()
+            this.player.drawLives()
 
             this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
         }, 1000 / this.FPS)
@@ -226,9 +229,27 @@ const Game = {
 
         })
     },
+    createScoreImg() {
+        this.scoreImg = new Image()
+        this.scoreImg.src = this.scoreBackgroundSource
+    },
     manageScore() {
-        this.ctx.fillStyle = "#000"
-        this.ctx.font = "20px 'Press Start 2P'";
+        this.ctx.drawImage(
+            this.scoreImg,
+            this.canvasSize.w - 400,
+            this.canvasSize.h - 107,
+            350,
+            60
+        )
+        this.ctx.drawImage(
+            this.scoreImg,
+            380 - 300,
+            this.canvasSize.h - 107,
+            300,
+            60
+        )
+        this.ctx.fillStyle = "#64571a"
+        this.ctx.font = "18px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
     }
 

@@ -124,16 +124,16 @@
       drawLives() {
           this.ctx.drawImage(
               this.imgSpriteWithHeart,
-              50,
-              this.canvasSize.h - 103,
+              139,
+              this.canvasSize.h - 98,
               40,
               40)
 
           for (let i = 1; i <= this.lives; i++) {
               this.ctx.drawImage(
                   this.imgHeart,
-                  50 * i + 50,
-                  this.canvasSize.h - 100,
+                  50 * i + 130,
+                  this.canvasSize.h - 95,
                   40,
                   40
               )
