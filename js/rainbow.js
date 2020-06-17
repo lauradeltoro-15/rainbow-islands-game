@@ -49,7 +49,7 @@ class Rainbow {
         });
     }
     drawRainbow(higherPlayerPosition, player, cameraVelocity) {
-        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.moveDownRainbows(cameraVelocity) : null
+        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null
         if (this.isPlayerFacingRight) {
             if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
                 this.createRightRainbow()
@@ -67,7 +67,7 @@ class Rainbow {
 
         }
     }
-    moveDownRainbows(cameraVelocity) {
+    setOffsetInRainbow(cameraVelocity) {
         this.rainbowToDraw.y += cameraVelocity
     }
 }

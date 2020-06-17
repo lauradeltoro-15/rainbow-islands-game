@@ -26,7 +26,6 @@ mainPages.forEach(elm => {
 
 insertCoins.forEach(elm => {
     elm.addEventListener("click", () => {
-        console.log("HEY")
         endGames.forEach(elm => {
             elm.classList.add("inactive")
             Game.initGame('canvas')

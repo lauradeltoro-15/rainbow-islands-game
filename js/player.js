@@ -11,8 +11,6 @@
           this.isFacingRight = true
           this.isFalling = false
           this.lives = 3
-          this.imageHeartSource = "images/heart.png"
-          this.spriteWithHeartSource = "images/sprite-with-heart.png"
           this.cameraVelocity = cameraVelocity
           this.actualRainbowDirection = undefined
           this.basePosition = {
@@ -52,24 +50,7 @@
           this.playerImg.img.src = this.playerImg.src
           this.drawPlayer()
       }
-      createImgHeart() {
-          this.imgHeart = new Image()
-          this.imgHeart.src = this.imageHeartSource
-          this.imgSpriteWithHeart = new Image()
-          this.imgSpriteWithHeart.src = this.spriteWithHeartSource
-
-      }
-      drawPlayer(framesCounter, higherPlayerPosition) {
-          this.rainbowsConstructed.forEach(elm => {
-              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
-              elm.rainbowCounter++
-              if (elm.rainbowCounter >= 300) {
-                  elm.isErasing = true
-                  elm.rainbowSize.w -= 5
-                  elm.rainbowSize.w <= 10 ? this.rainbowsConstructed.shift() : null
-
-              }
-          })
+      drawPlayer(framesCounter) {
           this.ctx.drawImage(
               this.playerImg.img,
               this.playerImg.framesIndex * Math.floor(this.playerImg.img.width / this.playerImg.frames),
@@ -103,6 +84,18 @@
 
           }
       }
+      controlRainbows(higherPlayerPosition) {
+          this.rainbowsConstructed.forEach(elm => {
+              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
+              elm.rainbowCounter++
+              if (elm.rainbowCounter >= 300) {
+                  elm.isErasing = true
+                  elm.rainbowSize.w -= 5
+                  elm.rainbowSize.w <= 10 ? this.rainbowsConstructed.shift() : null
+
+              }
+          })
+      }
       applyJumpGravity() {
           this.jumpDirection === "right" && this.playerPosition.x < this.range.max ? this.playerPosition.x += this.playerVelocity.x / 5 : null
           this.jumpDirection === "left" && this.playerPosition.x > this.range.min ? this.playerPosition.x -= this.playerVelocity.x / 5 : null
@@ -113,31 +106,12 @@
               this.setPlayerToStaticPosition()
           }
       }
-
       setPlayerToStaticPosition() {
           this.isJumping = false
           this.jumpDirection = undefined
           this.playerVelocity.y = 10
           this.playerVelocity.x = 15
           this.isFacingRight ? this.playerImg.framesIndex = 8 : this.playerImg.framesIndex = 7
-      }
-      drawLives() {
-          this.ctx.drawImage(
-              this.imgSpriteWithHeart,
-              139,
-              this.canvasSize.h - 98,
-              40,
-              40)
-
-          for (let i = 1; i <= this.lives; i++) {
-              this.ctx.drawImage(
-                  this.imgHeart,
-                  50 * i + 130,
-                  this.canvasSize.h - 95,
-                  40,
-                  40
-              )
-          }
       }
       isAlive() {
           return (this.lives > 0 && this.playerPosition.y < this.canvasSize.h)
@@ -167,7 +141,6 @@
                       this.isConstructing = true
                       this.isFacingRight ? this.actualRainbowDirection = "right" : this.actualRainbowDirection = "left"
                       this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight, this.actualRainbowDirection))
-
                       break;
               }
           })
@@ -176,7 +149,6 @@
                   case this.keys.LEFT:
                       this.playerImg.framesIndex = this.playerImg.leftSideIndex
                       this.isMoving = false
-
                       break;
                   case this.keys.RIGHT:
                       this.playerImg.framesIndex = this.playerImg.rightSideIndex
@@ -185,7 +157,6 @@
                   case this.keys.XKey:
                       this.isConstructing = false
                       break;
-
               }
 
           })

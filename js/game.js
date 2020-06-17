@@ -48,6 +48,8 @@ const Game = {
     chest: undefined,
     winMessage: undefined,
     winnerTimeOut: 300,
+    imageHeartSource: "images/heart.png",
+    spriteWithHeartSource: "images/sprite-with-heart.png",
     basePosition: {
         y: undefined,
         x: undefined
@@ -68,24 +70,24 @@ const Game = {
         this.background.createBackground()
         this.map.createMapImage()
         this.player.createImgPlayer()
-        this.player.createImgHeart()
+        this.createImgHeart()
         this.createGameInfoBoxes()
         this.chest.createChest()
         this.winMessage.createWinMessage()
 
         this.intervalId = setInterval(() => {
-            console.log(this.enemies)
             this.clearGame()
             this.background.drawBackground()
             this.isPlayerAtTopOfScreen() ? this.map.setOffsetInMap(this.player) : null
             this.map.drawMap(this.player)
             this.chest.setChestY()
             this.chest.drawChest()
-            this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
+            this.player.controlRainbows(this.higherPlayerPosition)
+            this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
             this.eraseEnemies()
             this.drawGameInfoBoxes()
-            this.player.drawLives()
+            this.drawLives()
             this.drawScore()
 
 
@@ -285,6 +287,30 @@ const Game = {
             this.manageWinnerTimeOutMenu()
         }
     },
+    createImgHeart() {
+        this.imgHeart = new Image()
+        this.imgHeart.src = this.imageHeartSource
+        this.imgSpriteWithHeart = new Image()
+        this.imgSpriteWithHeart.src = this.spriteWithHeartSource
+    },
+    drawLives() {
+        this.ctx.drawImage(
+            this.imgSpriteWithHeart,
+            139,
+            this.canvasSize.h - 98,
+            40,
+            40)
+
+        for (let i = 1; i <= this.player.lives; i++) {
+            this.ctx.drawImage(
+                this.imgHeart,
+                50 * i + 130,
+                this.canvasSize.h - 95,
+                40,
+                40
+            )
+        }
+    },
     retardWinnerMenu() {
         this.winnerTimeOut--
     },
@@ -312,6 +338,7 @@ const Game = {
         this.score = 0
         this.isPlaying = true
         this.winnerTimeOut = 300
+        this.framesCounter = 0
     },
     isPlayerAtTopOfScreen() {
         return this.player.playerPosition.y <= this.higherPlayerPosition && !this.player.isJumping
