@@ -165,6 +165,18 @@ const Game = {
         }
 
     },
+    manageEnemiesCollisonWithPlatforms() {
+        this.enemies.forEach(enem => {
+            const collidingTile = this.getCollidingTile(enem.enemiePosition, enem.enemieSize)
+            if (collidingTile) {
+                enem.enemieVelocity.y = 0
+                enem.enemiePosition.y = collidingTile - enem.enemieSize.h
+            } else {
+                enem.enemieVelocity.y = -6
+                enem.enemiePosition.y -= enem.enemieVelocity.y
+            }
+        })
+    },
     getCollidingTile(characterPosition, characterSize) {
         let tileYAxis;
         this.map.layer.forEach((row, rowIndex) => {
@@ -181,19 +193,6 @@ const Game = {
             })
         })
         return tileYAxis
-    },
-    manageEnemiesCollisonWithPlatforms() {
-        this.enemies.forEach(enem => {
-            if (!this.map.layer.some((row, rowIndex) => {
-                    if (this.getCollidingTile(row, rowIndex, enem.enemiePosition, enem.enemieSize)) {
-                        enem.enemieVelocity.y = 0
-                        enem.enemiePosition.y = this.map.getTileYAxis(rowIndex) - enem.enemieSize.h
-                    }
-                })) {
-                enem.enemieVelocity.y = -6
-                enem.enemiePosition.y -= enem.enemieVelocity.y
-            }
-        })
     },
     createRandomEnemie() {
         if (this.framesCounter % 300 === 0) {
