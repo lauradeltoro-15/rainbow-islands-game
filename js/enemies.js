@@ -1,9 +1,6 @@
 class Enemie {
-    constructor(ctx, enemieImgSrc, enemieImgFrames, framesCounter, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX) {
+    constructor(ctx, enemieImgSrc, enemieImgFrames, enemiePosX, enemiePosY, enemieSizeW, enemieSizeH, enemieVelX, enemieVelY, maxX, minX) {
         this.ctx = ctx
-        // this.basePosition = {
-        //     y: this.enemiePosition.y
-        // }
         this.enemieImg = {
             img: undefined,
             src: enemieImgSrc,

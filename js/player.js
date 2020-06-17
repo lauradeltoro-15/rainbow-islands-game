@@ -10,6 +10,9 @@
           this.isConstructing = false
           this.isFacingRight = true
           this.isFalling = false
+          this.lives = 3
+          this.imageHeartSource = "images/heart.png"
+          this.spriteWithHeaert = ""
           this.cameraVelocity = cameraVelocity
           this.actualRainbowDirection = undefined
           this.basePosition = {
@@ -48,6 +51,11 @@
           this.playerImg.img = new Image()
           this.playerImg.img.src = this.playerImg.src
           this.drawPlayer()
+      }
+      createImgHeart() {
+          this.imgHeart = new Image()
+          this.imgHeart.src = this.imageHeartSource
+
       }
       drawPlayer(framesCounter, higherPlayerPosition) {
           this.rainbowsConstructed.forEach(elm => {
@@ -110,6 +118,18 @@
           this.playerVelocity.y = 10
           this.playerVelocity.x = 15
           this.isFacingRight ? this.playerImg.framesIndex = 8 : this.playerImg.framesIndex = 7
+      }
+      drawLives() {
+
+          for (let i = 0; i < this.lives; i++) {
+              this.ctx.drawImage(
+                  this.imgHeart,
+                  50 * i + 50,
+                  this.canvasSize.h - 100,
+                  40,
+                  40
+              )
+          }
       }
       setListeners() {
           document.addEventListener("keydown", e => {

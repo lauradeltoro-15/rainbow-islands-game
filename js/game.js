@@ -5,11 +5,11 @@ const Game = {
     version: '1.0.0',
     canvasDom: undefined,
     ctx: undefined,
-    FPS: 60,
     intervalId: undefined,
+    FPS: 60,
     framesCounter: 0,
-    maxFrames: 20000,
-
+    maxFrames: 5000,
+    score: 0,
     canvasSize: {
         w: undefined,
         h: undefined
@@ -26,17 +26,17 @@ const Game = {
     higherPlayerPosition: 300,
     map: undefined,
     mapCols: 20,
-    mapRows: 40,
+    mapRows: 44,
     mapTSize: undefined,
     actualRainbowCollissionY: undefined,
     enemies: [],
     enemiesSources: ["images/floor-enemie-1.png", "images/floor-enemie-2.png"],
     starterEnemieVel: [1, -1, 2, -2],
+    enemiesCollisionRetarder: 0,
     basePosition: {
         y: undefined,
         x: undefined
     },
-    platformCollision: false,
     initGame(id) {
         this.canvasDom = document.getElementById(id)
         this.ctx = this.canvasDom.getContext('2d')
@@ -55,29 +55,31 @@ const Game = {
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
-        this.map.createMapImage()
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
 
         this.background.createBackground()
+        this.map.createMapImage()
         this.player.createImgPlayer()
+        this.player.createImgHeart()
 
         this.intervalId = setInterval(() => {
-            console.log(this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize))
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
-            this.generateRandomEnemie()
+            this.drawRandomEnemie()
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
-            //this.isCollidingEnemies() ? console.log("colliding with enemie") : null
+            this.player.drawLives()
+
+            this.isCollidingEnemies()
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
-            
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
-            this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
+            this.manageScore()
 
+            this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
         }, 1000 / this.FPS)
     },
     endGame() {
@@ -116,13 +118,13 @@ const Game = {
         this.enemies.forEach((enem, i) => {
             if (this.isCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
                 this.enemies.splice(i, 1)
+                this.score += 100
             }
         })
 
     },
     managePlayerRainbowCollissions() {
         if (this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
-            //console.log("positions", this.player.basePosition.y, this.player.playerPosition.y)
             if (this.player.isFalling) {
                 this.player.basePosition.y = this.actualRainbowCollissionY
                 this.player.playerPosition.y = this.player.basePosition.y - this.player.playerSize.h
@@ -130,30 +132,7 @@ const Game = {
             }
         }
     },
-    isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
-        return characterXPosition + characterWidth >= this.mapTSize * colIndex
-    },
-    isCharacterHeightOverTileYOrigin(rowIndex, characterPositionY, characterHeight) {
-        return characterPositionY + characterHeight + 5 >= this.map.getTileYAxis(rowIndex)
-    },
-    isCharacterXOriginBeforeTileWidth(colIndex, characterXPosition) {
-        return characterXPosition <= this.mapTSize * colIndex + this.mapTSize
-    },
-    isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
-        return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
-    },
-    isSomeTileColliding(row, rowIndex, characterPosition, characterSize) {
-        return row.some((col, colIndex) => {
-            return (
-                col &&
-                this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
-                this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
-                this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
-                this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
-            )
 
-        })
-    },
     managePlayerCollisionWithPlatforms() {
         if (!this.map.layer.some((row, rowIndex) => {
                 if (this.isSomeTileColliding(row, rowIndex, this.player.playerPosition, this.player.playerSize)) {
@@ -183,12 +162,11 @@ const Game = {
             }
         })
     },
-    generateRandomEnemie() {
+    drawRandomEnemie() {
         if (this.framesCounter % 300 === 0) {
             this.enemies.push(new FloorEnemie(this.ctx,
                 this.enemiesSources[Math.floor(Math.random() * this.enemiesSources.length)],
                 2,
-                this.framesCounter,
                 Math.random() * (this.canvasSize.w - 150),
                 0,
                 100,
@@ -205,13 +183,52 @@ const Game = {
     },
     isCollidingEnemies() {
         return this.enemies.some(enem => {
-            return (
+            if (
                 this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
                 this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
                 this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
                 this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
-            )
+            ) {
+                if (!this.enemiesCollisionRetarder) {
+                    this.player.lives--
+
+                } else if (this.enemiesCollisionRetarder === 100) {
+                    this.enemiesCollisionRetarder = 0
+                    return true
+                }
+                this.enemiesCollisionRetarder++
+                return true
+
+            }
         })
     },
+    isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
+        return characterXPosition + characterWidth >= this.mapTSize * colIndex
+    },
+    isCharacterHeightOverTileYOrigin(rowIndex, characterPositionY, characterHeight) {
+        return characterPositionY + characterHeight + 5 >= this.map.getTileYAxis(rowIndex)
+    },
+    isCharacterXOriginBeforeTileWidth(colIndex, characterXPosition) {
+        return characterXPosition <= this.mapTSize * colIndex + this.mapTSize
+    },
+    isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
+        return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
+    },
+    isSomeTileColliding(row, rowIndex, characterPosition, characterSize) {
+        return row.some((col, colIndex) => {
+            return (
+                col &&
+                this.isCharacterWidthAfterTileXOrigin(colIndex, characterPosition.x, characterSize.w) &&
+                this.isCharacterHeightOverTileYOrigin(rowIndex, characterPosition.y, characterSize.h) &&
+                this.isCharacterXOriginBeforeTileWidth(colIndex, characterPosition.x) &&
+                this.isCharacterYOrigingOverTileYWidth(rowIndex, characterPosition.y, characterSize.h)
+            )
+
+        })
+    },
+    manageScore() {
+        this.ctx.font = "20px 'Press Start 2P'";
+        this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
+    }
 
 }
