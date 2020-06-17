@@ -69,7 +69,7 @@ const Game = {
         this.map.createMapImage()
         this.player.createImgPlayer()
         this.player.createImgHeart()
-        this.createScoreImg()
+        this.createGameInfoBoxes()
         this.chest.createChest()
         this.winMessage.createWinMessage()
 
@@ -79,23 +79,24 @@ const Game = {
             this.map.drawMap(this.player)
             this.chest.setChestY()
             this.chest.drawChest()
-            this.isPlaying ? this.createRandomEnemie() : null
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
+            this.drawGameInfoBoxes()
+            this.player.drawLives()
+            this.drawScore()
 
+            this.isPlaying ? this.createRandomEnemie() : null
             this.hasPlayerWon() ? this.manageWinner() : null;
             !this.player.isAlive() ? this.manageLoser() : null
-
             this.isPlayerCollidingEnemies() ? this.damagePlayer() : null
-            this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
-            this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
+            this.player.isFalling = this.player.playerVelocity.y < 0 ? true : false
+
+            this.managePlayerCollisionWithPlatforms(this.mapTSize)
             this.manageEnemiesCollisonWithPlatforms()
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
-            this.manageScore()
-            this.player.drawLives()
 
-            this.framesCounter > this.maxFrames ? this.framesCounter = 0 : this.framesCounter++
+            this.framesCounter = this.framesCounter >= this.maxFrames ? 0 : this.framesCounter + 1
         }, 1000 / this.FPS)
     },
     endGame() {
@@ -240,11 +241,12 @@ const Game = {
 
         })
     },
-    createScoreImg() {
+    createGameInfoBoxes() {
         this.scoreImg = new Image()
         this.scoreImg.src = this.scoreBackgroundSource
     },
-    manageScore() {
+
+    drawGameInfoBoxes() {
         this.ctx.drawImage(
             this.scoreImg,
             this.canvasSize.w - 400,
@@ -259,6 +261,9 @@ const Game = {
             300,
             60
         )
+
+    },
+    drawScore() {
         this.ctx.fillStyle = "#64571a"
         this.ctx.font = "18px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
