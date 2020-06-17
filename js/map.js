@@ -1,15 +1,14 @@
 class Map {
-    constructor(ctx, cols, rows, mapTSize, canvasSize, higherPlayerPosition, cameraVelocity, source) {
+    constructor(ctx, cols, rows, mapTSize, canvasSize, cameraVelocity, source) {
         this.canvasSize = canvasSize
         this.ctx = ctx
         this.mapToDraw = {
-            y: 0,
-
+            y: 0
         }
         this.cols = cols
         this.rows = rows
         this.tSize = mapTSize
-        this.higherPlayerPosition = higherPlayerPosition
+
         this.cameraVelocity = cameraVelocity
         this.mapImg = {
             img: undefined,
@@ -63,26 +62,12 @@ class Map {
             [0, 0, 0, 14, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 0, 0, 0]
         ]
     }
-    isSolidTile(row, col) {
-        return this.layer[row][col]
-    }
-    getTileYAxis(rowIndex) {
-        return -this.tSize * this.rows + rowIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
-    }
-    getTileXAxis(colIndex) {
-        return this.tSize * colIndex
-    }
     createMapImage() {
         this.mapImg.img = new Image()
         this.mapImg.img.src = this.mapImg.source
     }
-    drawMap(player) {
-        if (player.playerPosition.y <= this.higherPlayerPosition && !player.isJumping) {
-            this.mapToDraw.y += 10
-            player.isJumping = false
-        }
+    drawMap() {
         this.layer.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
-
             if (col) {
                 if (this.getTileYAxis(rowIndex) > -3 * this.tSize && this.getTileYAxis(rowIndex) < this.canvasSize.h + 2 * this.tSize) {
                     this.ctx.drawImage(
@@ -97,8 +82,17 @@ class Map {
                         this.tSize
                     )
                 }
-
             }
         }))
+    }
+    setOffsetInMap(player) {
+            this.mapToDraw.y += 10
+            player.isJumping = false
+    }
+    getTileYAxis(rowIndex) {
+        return -this.tSize * this.rows + rowIndex * this.tSize + this.canvasSize.h + this.mapToDraw.y
+    }
+    getTileXAxis(colIndex) {
+        return this.tSize * colIndex
     }
 }

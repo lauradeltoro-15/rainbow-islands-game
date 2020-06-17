@@ -60,7 +60,7 @@ const Game = {
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png")
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
         this.chest = new Chest(this.ctx, this.canvasSize, 200, 250, this.map)
         this.winMessage = new WinMessage(this.ctx, this.canvasSize, 70, 600, this.map)
@@ -74,16 +74,20 @@ const Game = {
         this.winMessage.createWinMessage()
 
         this.intervalId = setInterval(() => {
+            console.log(this.enemies)
             this.clearGame()
             this.background.drawBackground()
+            this.isPlayerAtTopOfScreen() ? this.map.setOffsetInMap(this.player) : null
             this.map.drawMap(this.player)
             this.chest.setChestY()
             this.chest.drawChest()
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
+            this.eraseEnemies()
             this.drawGameInfoBoxes()
             this.player.drawLives()
             this.drawScore()
+
 
             this.isPlaying ? this.createRandomEnemie() : null
             this.hasPlayerWon() ? this.manageWinner() : null;
@@ -91,7 +95,7 @@ const Game = {
             this.isPlayerCollidingEnemies() ? this.damagePlayer() : null
             this.player.isFalling = this.player.playerVelocity.y < 0 ? true : false
 
-            this.managePlayerCollisionWithPlatforms(this.mapTSize)
+            this.managePlayerCollisionWithPlatforms()
             this.manageEnemiesCollisonWithPlatforms()
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
@@ -148,6 +152,18 @@ const Game = {
             })
         })
         return tileYAxis
+    },
+    isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
+        return characterXPosition + characterWidth >= this.mapTSize * colIndex
+    },
+    isCharacterHeightOverTileYOrigin(rowIndex, characterPositionY, characterHeight) {
+        return characterPositionY + characterHeight + 5 >= this.map.getTileYAxis(rowIndex)
+    },
+    isCharacterXOriginBeforeTileWidth(colIndex, characterXPosition) {
+        return characterXPosition <= this.mapTSize * colIndex + this.mapTSize
+    },
+    isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
+        return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
     },
     manageEnemiesRainbowCollission() {
         this.enemies.forEach((enem, i) => {
@@ -208,18 +224,10 @@ const Game = {
                 0))
             this.enemies.forEach(enem => enem.createImgEnemie())
         }
+    },
+    eraseEnemies() {
         this.enemies.forEach((enem, i) => {
             enem.enemiePosition.y > this.canvasSize.w + 90 ? this.enemies.splice(i, 1) : null
-        })
-    },
-    isPlayerCollidingEnemies() {
-        return this.enemies.some(enem => {
-            return (
-                this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
-                this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
-                this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
-                this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
-            )
         })
     },
     damagePlayer() {
@@ -231,19 +239,16 @@ const Game = {
         }
         this.enemiesCollisionRetarder++
     },
-    isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
-        return characterXPosition + characterWidth >= this.mapTSize * colIndex
+    isPlayerCollidingEnemies() {
+        return this.enemies.some(enem => {
+            return (
+                this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
+                this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
+                this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
+                this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
+            )
+        })
     },
-    isCharacterHeightOverTileYOrigin(rowIndex, characterPositionY, characterHeight) {
-        return characterPositionY + characterHeight + 5 >= this.map.getTileYAxis(rowIndex)
-    },
-    isCharacterXOriginBeforeTileWidth(colIndex, characterXPosition) {
-        return characterXPosition <= this.mapTSize * colIndex + this.mapTSize
-    },
-    isCharacterYOrigingOverTileYWidth(rowIndex, characterYPosition, characterHeight) {
-        return characterYPosition <= this.map.getTileYAxis(rowIndex) + this.mapTSize / 10 - characterHeight
-    },
-
     createGameInfoBoxes() {
         this.scoreImg = new Image()
         this.scoreImg.src = this.scoreBackgroundSource
@@ -271,9 +276,6 @@ const Game = {
         this.ctx.font = "18px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
     },
-    hasPlayerWon() {
-        return (this.player.playerPosition.y + this.player.playerSize.h <= this.chest.chestPosition.y + this.chest.chestSize.h)
-    },
     manageWinner() {
         if (this.hasPlayerWon()) {
             this.isPlaying = false
@@ -288,6 +290,9 @@ const Game = {
     },
     manageWinnerTimeOutMenu() {
         this.winnerTimeOut <= 0 ? document.querySelector(".end-message.winner").classList.remove("inactive") : this.retardWinnerMenu()
+    },
+    hasPlayerWon() {
+        return (this.player.playerPosition.y + this.player.playerSize.h <= this.chest.chestPosition.y + this.chest.chestSize.h)
     },
     manageLoser() {
         this.endGame()
@@ -307,5 +312,8 @@ const Game = {
         this.score = 0
         this.isPlaying = true
         this.winnerTimeOut = 300
+    },
+    isPlayerAtTopOfScreen() {
+        return this.player.playerPosition.y <= this.higherPlayerPosition && !this.player.isJumping
     }
 }
