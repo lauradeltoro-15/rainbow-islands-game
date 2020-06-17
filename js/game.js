@@ -105,51 +105,6 @@ const Game = {
     clearGame() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
-    isCollidingRainbows(characterPosition, characterSize) {
-        return this.player.rainbowsConstructed.some(rainbow => {
-            if (rainbow.actualRainbowDirection === "right") {
-                if (
-                    characterPosition.x + characterSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
-                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y - 5 &&
-                    characterPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
-                    characterPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
-                ) {
-                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
-                    return true
-                }
-            } else if (rainbow.actualRainbowDirection === "left") {
-                if (
-                    characterPosition.x + characterSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
-                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y - 5 &&
-                    characterPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
-                    characterPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
-                ) {
-                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y
-                    return true
-                }
-            }
-
-        })
-    },
-    manageEnemiesRainbowCollission() {
-        this.enemies.forEach((enem, i) => {
-            if (this.isCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
-                this.enemies.splice(i, 1)
-                this.score += 100
-            }
-        })
-
-    },
-    managePlayerRainbowCollissions() {
-        if (this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
-            if (this.player.isFalling) {
-                this.player.basePosition.y = this.actualRainbowCollissionY
-                this.player.playerPosition.y = this.player.basePosition.y - this.player.playerSize.h
-                this.player.setPlayerToStaticPosition()
-            }
-        }
-    },
-
     managePlayerCollisionWithPlatforms() {
         const collidingTile = this.getCollidingTile(this.player.playerPosition, this.player.playerSize)
         if (collidingTile) {
@@ -193,6 +148,50 @@ const Game = {
             })
         })
         return tileYAxis
+    },
+    manageEnemiesRainbowCollission() {
+        this.enemies.forEach((enem, i) => {
+            if (this.isCollidingRainbows(enem.enemiePosition, enem.enemieSize)) {
+                this.enemies.splice(i, 1)
+                this.score += 100
+            }
+        })
+
+    },
+    managePlayerRainbowCollissions() {
+        if (this.isCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
+            if (this.player.isFalling) {
+                this.player.basePosition.y = this.actualRainbowCollissionY
+                this.player.playerPosition.y = this.player.basePosition.y - this.player.playerSize.h
+                this.player.setPlayerToStaticPosition()
+            }
+        }
+    },
+    isCollidingRainbows(characterPosition, characterSize) {
+        return this.player.rainbowsConstructed.some(rainbow => {
+            if (rainbow.actualRainbowDirection === "right") {
+                if (
+                    characterPosition.x + characterSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
+                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y - 5 &&
+                    characterPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
+                    characterPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
+                ) {
+                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
+                    return true
+                }
+            } else if (rainbow.actualRainbowDirection === "left") {
+                if (
+                    characterPosition.x + characterSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
+                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y - 5 &&
+                    characterPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
+                    characterPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
+                ) {
+                    this.actualRainbowCollissionY = rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y
+                    return true
+                }
+            }
+
+        })
     },
     createRandomEnemie() {
         if (this.framesCounter % 300 === 0) {
