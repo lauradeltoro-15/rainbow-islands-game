@@ -227,6 +227,7 @@ const Game = {
         })
     },
     manageScore() {
+        this.ctx.fillStyle = "#000"
         this.ctx.font = "20px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
     }

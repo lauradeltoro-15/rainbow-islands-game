@@ -12,7 +12,7 @@
           this.isFalling = false
           this.lives = 3
           this.imageHeartSource = "images/heart.png"
-          this.spriteWithHeaert = ""
+          this.spriteWithHeartSource = "images/sprite-with-heart.png"
           this.cameraVelocity = cameraVelocity
           this.actualRainbowDirection = undefined
           this.basePosition = {
@@ -55,6 +55,8 @@
       createImgHeart() {
           this.imgHeart = new Image()
           this.imgHeart.src = this.imageHeartSource
+          this.imgSpriteWithHeart = new Image()
+          this.imgSpriteWithHeart.src = this.spriteWithHeartSource
 
       }
       drawPlayer(framesCounter, higherPlayerPosition) {
@@ -120,8 +122,14 @@
           this.isFacingRight ? this.playerImg.framesIndex = 8 : this.playerImg.framesIndex = 7
       }
       drawLives() {
+          this.ctx.drawImage(
+              this.imgSpriteWithHeart,
+              50,
+              this.canvasSize.h - 103,
+              40,
+              40)
 
-          for (let i = 0; i < this.lives; i++) {
+          for (let i = 1; i <= this.lives; i++) {
               this.ctx.drawImage(
                   this.imgHeart,
                   50 * i + 50,
