@@ -279,7 +279,7 @@ const Game = {
     manageWinner() {
         if (this.hasPlayerWon()) {
             this.isPlaying = false
-            this.chest.manageChestAnimation(this.framesCounter)
+            this.chest.animateChest(this.framesCounter)
             this.winMessage.drawWinMessage()
             this.winMessage.animateWinMessage()
             this.manageWinnerTimeOutMenu()

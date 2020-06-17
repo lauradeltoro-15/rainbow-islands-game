@@ -42,9 +42,4 @@ class Chest {
         framesCounter % 12 === 0 ? this.chestImg.framesIndex++ : null
         this.chestImg.framesIndex > this.chestImg.frames - 1 ? this.chestImg.framesIndex = this.chestImg.frames - 1 : null
     }
-    manageChestAnimation(framesCounter){
-    
-        this.animateChest(framesCounter)
-    }
-
 }

@@ -1,6 +1,5 @@
 class WinMessage {
     constructor(ctx, canvasSize, height, width, map) {
-
         this.ctx = ctx
         this.canvasSize = canvasSize
         this.winMsgSize = {
@@ -16,14 +15,11 @@ class WinMessage {
             src: "images/goal-in.png"
         }
         this.map = map
-
     }
-
     createWinMessage() {
         this.winMsgImg.img = new Image()
         this.winMsgImg.img.src = this.winMsgImg.src
     }
-
     drawWinMessage() {
         console.log(`Image: ${this.winMsgImg.img} xPosition: ${this.winMsgPosition.x}yPosition: ${this.winMsgPosition.y}Width:${this.winMsgSize.w}Height:${this.winMsgSize.h}`)
         this.ctx.drawImage(
@@ -38,6 +34,4 @@ class WinMessage {
         this.winMsgPosition.y <= this.map.getTileYAxis(4) - this.winMsgSize.h ? this.winMsgPosition.y += 2 : null
 
     }
-    
-
 }
