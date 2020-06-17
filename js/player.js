@@ -140,7 +140,7 @@
           }
       }
       isAlive() {
-          return (this.lives >= 0 && this.playerPosition.y < this.canvasSize.h )
+          return (this.lives > 0 && this.playerPosition.y < this.canvasSize.h)
       }
       setListeners() {
           document.addEventListener("keydown", e => {

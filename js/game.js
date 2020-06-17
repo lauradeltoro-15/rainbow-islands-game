@@ -291,5 +291,6 @@ const Game = {
     },
     manageLoser() {
         this.endGame()
+        document.querySelector(".end-message").classList.remove("inactive")
     }
 }

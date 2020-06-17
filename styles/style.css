@@ -1,7 +1,7 @@
 h1,
 h2,
 p,
-.start-button {
+.start-button,a {
     font-family: 'Press Start 2P',
         cursive;
     text-align: center;
@@ -69,4 +69,56 @@ article.instructions-container {
 
 .main-image {
     width: 700px;
+}
+
+.end-message {
+    text-align: center;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position:absolute;
+    top:50%;
+    left: 50%;
+    margin-left:-200px; 
+
+}
+.end-message.inactive{
+    display:none
+}
+
+
+
+.game-over-text {
+
+    font-size: 200x;
+    z-index: 20;
+    color: #64571a
+
+}
+
+.background-end-message {
+    left:50%;
+    position: absolute;
+    width: 500px;
+    margin-left: -250px;
+    z-index:10;
+    
+}
+
+.button-play-again {
+    color: #fff;
+    margin:10px;
+    z-index:20;
+    width: 250px;
+    padding: 10px 20px;
+    transition: all 0.5s;
+
+    
+
+}
+.button-play-again:hover {
+    color: white;
+    transform: scale(1.2);
+    text-decoration: none;
 }
