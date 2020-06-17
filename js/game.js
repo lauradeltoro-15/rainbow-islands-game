@@ -55,6 +55,7 @@ const Game = {
         this.canvasDom = document.getElementById(id)
         this.ctx = this.canvasDom.getContext('2d')
         this.setDimensions()
+        this.resetValues()
         this.startGame()
     },
     setDimensions() {
@@ -94,8 +95,7 @@ const Game = {
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
-            this.hasPlayerWin() ? this.manageWinner() : null
-            !this.player.isAlive() ? this.manageLoser() : null
+            this.hasPlayerWin() ? this.manageWinner() : null!this.player.isAlive() ? this.manageLoser() : null
 
 
 
@@ -291,6 +291,12 @@ const Game = {
     },
     manageLoser() {
         this.endGame()
-        document.querySelector(".end-message").classList.remove("inactive")
+        document.querySelector(".end-message.loser").classList.remove("inactive")
+    },
+    resetValues() {
+        this.enemies.splice(0, this.enemies.length)
+        this.score = 0
+        this.isPlaying = true
+
     }
 }
