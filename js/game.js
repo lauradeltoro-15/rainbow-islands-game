@@ -55,19 +55,9 @@ const Game = {
     initGame(id) {
         this.canvasDom = document.getElementById(id)
         this.ctx = this.canvasDom.getContext('2d')
-        this.setDimensions()
         this.resetValues()
         this.startGame()
     },
-    setDimensions() {
-        this.canvasSize.w = window.innerWidth
-        this.canvasSize.h = window.innerHeight
-        this.mapTSize = this.canvasSize.w / this.mapCols
-        this.basePosition.y = this.canvasSize.h - this.mapTSize * 2
-        this.canvasDom.setAttribute('width', this.canvasSize.w)
-        this.canvasDom.setAttribute('height', this.canvasSize.h)
-    },
-
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.higherPlayerPosition, this.cameraVelocity, "images/21-tileset.png")
@@ -83,25 +73,20 @@ const Game = {
         this.chest.createChest()
         this.winMessage.createWinMessage()
 
-
-
         this.intervalId = setInterval(() => {
-
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
-            this.chest.getChestY()
+            this.chest.setChestY()
             this.chest.drawChest()
             this.isPlaying ? this.createRandomEnemie() : null
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
-            this.hasPlayerWin() ? this.manageWinner() : null;
+            this.hasPlayerWon() ? this.manageWinner() : null;
             !this.player.isAlive() ? this.manageLoser() : null
 
-
-
-            this.isCollidingEnemies()
+            this.isPlayerCollidingEnemies() ? this.damagePlayer() : null
             this.player.playerVelocity.y < 0 ? this.player.isFalling = true : this.player.isFalling = false
             this.managePlayerCollisionWithPlatforms(this.canvasSize.w / 20)
             this.manageEnemiesCollisonWithPlatforms()
@@ -212,26 +197,24 @@ const Game = {
             enem.enemiePosition.y > this.canvasSize.w + 90 ? this.enemies.splice(i, 1) : null
         })
     },
-    isCollidingEnemies() {
+    isPlayerCollidingEnemies() {
         return this.enemies.some(enem => {
-            if (
+            return (
                 this.player.playerPosition.x + this.player.playerSize.w >= enem.enemiePosition.x &&
                 this.player.playerPosition.y + this.player.playerSize.h >= enem.enemiePosition.y &&
                 this.player.playerPosition.x <= enem.enemiePosition.x + enem.enemieSize.w &&
                 this.player.playerPosition.y < enem.enemiePosition.y + enem.enemieSize.h
-            ) {
-                if (!this.enemiesCollisionRetarder) {
-                    this.player.lives--
-
-                } else if (this.enemiesCollisionRetarder === 100) {
-                    this.enemiesCollisionRetarder = 0
-                    return true
-                }
-                this.enemiesCollisionRetarder++
-                return true
-
-            }
+            )
         })
+    },
+    damagePlayer() {
+        if (!this.enemiesCollisionRetarder) {
+            this.player.lives--
+        } else if (this.enemiesCollisionRetarder === 100) {
+            this.enemiesCollisionRetarder = 0
+            return
+        }
+        this.enemiesCollisionRetarder++
     },
     isCharacterWidthAfterTileXOrigin(colIndex, characterXPosition, characterWidth) {
         return characterXPosition + characterWidth >= this.mapTSize * colIndex
@@ -280,11 +263,11 @@ const Game = {
         this.ctx.font = "18px 'Press Start 2P'";
         this.ctx.fillText(`SCORE: ${this.score} PTS`, this.canvasSize.w - 350, this.canvasSize.h - 65)
     },
-    hasPlayerWin() {
+    hasPlayerWon() {
         return (this.player.playerPosition.y + this.player.playerSize.h <= this.chest.chestPosition.y + this.chest.chestSize.h)
     },
     manageWinner() {
-        if (this.hasPlayerWin()) {
+        if (this.hasPlayerWon()) {
             this.isPlaying = false
             this.chest.manageChestAnimation(this.framesCounter)
             this.winMessage.drawWinMessage()
@@ -302,11 +285,19 @@ const Game = {
         this.endGame()
         document.querySelector(".end-message.loser").classList.remove("inactive")
     },
+    setDimensions() {
+        this.canvasSize.w = window.innerWidth
+        this.canvasSize.h = window.innerHeight
+        this.mapTSize = this.canvasSize.w / this.mapCols
+        this.basePosition.y = this.canvasSize.h - this.mapTSize * 2
+        this.canvasDom.setAttribute('width', this.canvasSize.w)
+        this.canvasDom.setAttribute('height', this.canvasSize.h)
+    },
     resetValues() {
+        this.setDimensions()
         this.enemies.splice(0, this.enemies.length)
         this.score = 0
         this.isPlaying = true
         this.winnerTimeOut = 300
-
     }
 }

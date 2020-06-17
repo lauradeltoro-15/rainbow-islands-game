@@ -18,7 +18,7 @@ class Chest {
         }
         this.map = map
     }
-    getChestY() {
+    setChestY() {
         this.chestPosition.y = this.map.getTileYAxis(4) - this.chestSize.h + 7
     }
     createChest() {
@@ -26,7 +26,6 @@ class Chest {
         this.chestImg.img.src = this.chestImg.source
     }
     drawChest() {
-       
         this.ctx.drawImage(
             this.chestImg.img,
             this.chestImg.framesIndex * Math.floor(this.chestImg.img.width / this.chestImg.frames),
