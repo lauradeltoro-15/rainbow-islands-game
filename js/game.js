@@ -84,7 +84,7 @@ const Game = {
 
 
         this.intervalId = setInterval(() => {
-            console.log(this.enemies)
+
             this.clearGame()
             this.background.drawBackground()
             this.map.drawMap(this.player)
@@ -94,7 +94,9 @@ const Game = {
             this.player.drawPlayer(this.framesCounter, this.higherPlayerPosition)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
-            this.hasPlayerWin ? this.manageWinner() : null
+            this.hasPlayerWin() ? this.manageWinner() : null
+            !this.player.isAlive() ? this.manageLoser() : null
+
 
 
             this.isCollidingEnemies()
@@ -286,6 +288,8 @@ const Game = {
             this.winMessage.drawWinMessage()
             this.winMessage.animateWinMessage()
         }
+    },
+    manageLoser() {
+        this.endGame()
     }
-
 }
