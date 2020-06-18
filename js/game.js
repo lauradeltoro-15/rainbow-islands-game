@@ -165,6 +165,7 @@ const Game = {
         if (superPower) {
             this.map.layer[superPower.row][superPower.col] = 0
             this.player.isInSuperPower = true
+            this.changeGameMusicInSuperPower()
         }
     },
     getCollidingTile(characterPosition, characterSize) {
@@ -427,12 +428,21 @@ const Game = {
         } else {
             this.superPower = 800
             this.player.isInSuperPower = false
+            this.controlEndOfSuperPower()
         }
+    },
+    controlEndOfSuperPower() {
+        const Audio = document.querySelector(".levelAudio")
+        const superPowerAudio = document.querySelector(".superPowerAudio")
+        superPowerAudio.pause()
+        Audio.play()
+        Audio.volume = 0.1
     },
     toggleSound() {
         const soundOn = document.querySelector(".game .sound-on")
         const soundOff = document.querySelector(".game .sound-off")
         const Audio = document.querySelector(".levelAudio")
+        const superPowerAudio = document.querySelector(".superPowerAudio")
         soundOn.addEventListener("click", () => {
             Audio.play()
             soundOn.classList.add("inactive")
@@ -443,6 +453,13 @@ const Game = {
             soundOn.classList.remove("inactive")
             soundOff.classList.add("inactive")
         })
+    },
+    changeGameMusicInSuperPower() {
+        const Audio = document.querySelector(".levelAudio")
+        const superPowerAudio = document.querySelector(".superPowerAudio")
+        Audio.pause()
+        superPowerAudio.play()
+        superPowerAudio.volume = 0.1
     }
 
 }
