@@ -12,6 +12,10 @@
 </head>
 
 <body>
+    <aside class="sound-control game">
+        <img src="images/sound-on.png" alt="Sound on" class="sound sound-on inactive">
+        <img src="images/sound-off.png" alt="Sound off" class="sound sound-off inactive">
+    </aside>
     <div class="end-message inactive loser">
         <img class="background-end-message" src="images/background-end-message.png" alt="Game over photo">
         <h1 class="game-over-text">GAME OVER</h1>
@@ -41,6 +45,11 @@
                         <h2>ENEMIES</h2>
                         <h2>GOOD FOR YOU</h2>
                         <a class="start-button" href="#">START GAME</a>
+                        <aside class="sound-control">
+                            <img src="images/sound-on.png" alt="Sound on" class="sound sound-on main-page">
+                            <img src="images/sound-off.png" alt="" class="sound sound-off main-page inactive">
+                        </aside>
+
                         <audio class="introAudio">
                             <source src="Sounds/Intro.mp3" type="audio/MPEG">
                             </source>
@@ -49,13 +58,11 @@
                             <source src="Sounds/LevelMusic.mp3" type="audio/MPEG">
                             </source>
                         </audio>
-
                     </article>
                 </div>
             </div>
         </div>
     </section>
-
     <canvas id="canvas"></canvas>
 
 

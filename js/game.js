@@ -63,6 +63,8 @@ const Game = {
 
     },
     startGame() {
+        this.toggleSound()
+
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
         this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png")
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
@@ -426,6 +428,21 @@ const Game = {
             this.superPower = 800
             this.player.isInSuperPower = false
         }
+    },
+    toggleSound() {
+        const soundOn = document.querySelector(".game .sound-on")
+        const soundOff = document.querySelector(".game .sound-off")
+        const Audio = document.querySelector(".levelAudio")
+        soundOn.addEventListener("click", () => {
+            Audio.play()
+            soundOn.classList.add("inactive")
+            soundOff.classList.remove("inactive")
+        })
+        soundOff.addEventListener("click", () => {
+            Audio.pause()
+            soundOn.classList.remove("inactive")
+            soundOff.classList.add("inactive")
+        })
     }
 
 }
