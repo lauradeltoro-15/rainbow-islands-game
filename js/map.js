@@ -20,9 +20,19 @@ class Map {
             frames: 6,
             framesIndex: 0
         }
+        this.mapSuperPowerImg = {
+            img: undefined,
+            source: "images/red-diamond.png",
+            frames: 6,
+            framesIndex: 0
+        }
         this.mapCoinSize = {
             w: 50,
             h: 150
+        }
+        this.mapSuperPowerSize = {
+            w: 70,
+            h: 70
         }
         this.layer = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -66,7 +76,7 @@ class Map {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
             [4, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 5, 5, 6],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 0, 0, 0],
             [0, 0, 0, 14, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 0, 0, 0]
         ]
@@ -80,10 +90,14 @@ class Map {
         this.mapCoinImg.img = new Image()
         this.mapCoinImg.img.src = this.mapCoinImg.source
     }
+    createMapSuperPowerImage() {
+        this.mapSuperPowerImg.img = new Image()
+        this.mapSuperPowerImg.img.src = this.mapSuperPowerImg.source
+    }
     drawMap() {
         this.layer.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
             if (this.isTileOnScreen(rowIndex)) {
-                if (col && col !== 1) {
+                if (this.isATile(col)) {
                     this.ctx.drawImage(
                         this.mapImg.img,
                         (col - 1) * Math.floor(this.mapImg.img.width / this.mapImg.frames),
@@ -95,7 +109,20 @@ class Map {
                         this.tSize,
                         this.tSize
                     )
-                } else if (col === 1) {
+                } else if (this.isASuperPower(col)) {
+                    
+                    this.ctx.drawImage(
+                        this.mapSuperPowerImg.img,
+                        this.mapSuperPowerImg.framesIndex * Math.floor(this.mapSuperPowerImg.img.width / this.mapSuperPowerImg.frames),
+                        0,
+                        Math.floor(this.mapSuperPowerImg.img.width / this.mapSuperPowerImg.frames),
+                        this.mapSuperPowerImg.img.height,
+                        this.getTileXAxis(colIndex),
+                        this.getTileYAxis(rowIndex) - 80,
+                        this.mapSuperPowerSize.w,
+                        this.mapSuperPowerSize.h
+                    )
+                } else if (this.isACoin(col)) {
                     this.ctx.drawImage(
                         this.mapCoinImg.img,
                         this.mapCoinImg.framesIndex * Math.floor(this.mapCoinImg.img.width / this.mapCoinImg.frames),
@@ -111,9 +138,18 @@ class Map {
             }
         }))
     }
-    animateMapCoin(framesCounter) {
-        framesCounter % 25 === 0 ? this.mapCoinImg.framesIndex++ : null
-        this.mapCoinImg.framesIndex > this.mapCoinImg.frames - 1 ? this.mapCoinImg.framesIndex = 0 : null
+    isATile(col) {
+        return col && col !== 1 && col !== 2
+    }
+    isACoin(col) {
+        return col === 1
+    }
+    isASuperPower(col) {
+        return col === 2
+    }
+    animateMapElementImg(framesCounter, elementImg) {
+        framesCounter % 25 === 0 ? elementImg.framesIndex++ : null
+        elementImg.framesIndex > elementImg.frames - 1 ? elementImg.framesIndex = 0 : null
     }
     setOffsetInMap(player) {
         this.mapToDraw.y += 10

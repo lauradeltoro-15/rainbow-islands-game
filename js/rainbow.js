@@ -9,6 +9,7 @@ class Rainbow {
             y: 0
         }
         this.rainbowCounter = 0
+        this.superRainbowCounter = 0
         this.rainbowPosition = {
             facingLeft: {
                 x: this.playerPosition.x,
@@ -22,9 +23,12 @@ class Rainbow {
         this.rainbowSize = {
             w: 0,
             h: 65,
-            maxW: 300
+            maxW: 300,
+            superMaxW: 600,
+
         }
         this.growVel = 5
+        this.superGrowVel = 7
         this.isPlayerFacingRight = isPlayerFacingRight
         this.rainbowColors = ["#ED2224", "#EF4B26", "#F1772F", "#F9A23A", "#FBD11B", "#FFEB00", "#BFD721", "#91C73D", "#34A742", "#039453", "#1790A5", "##268AE2", "#2B5AB6", "#372D8D", "#4B2481"]
     }
@@ -49,7 +53,7 @@ class Rainbow {
         });
     }
     drawRainbow(higherPlayerPosition, player, cameraVelocity) {
-        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null
+        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null   
         if (this.isPlayerFacingRight) {
             if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
                 this.createRightRainbow()
@@ -67,6 +71,27 @@ class Rainbow {
 
         }
     }
+    drawSuperRainbow(higherPlayerPosition, player, cameraVelocity) {
+        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null   
+        if (this.isPlayerFacingRight) {
+            if (this.rainbowSize.w >= this.rainbowSize.superMaxW || this.isErasing) {
+                this.createRightRainbow()
+                return
+            }
+            this.rainbowSize.w += this.superGrowVel
+            this.createRightRainbow()
+        } else {
+            if (this.rainbowSize.w >= this.rainbowSize.superMaxW || this.isErasing) {
+                this.createLeftRainbow()
+                return
+            }
+            this.rainbowSize.w += this.superGrowVel
+            this.createLeftRainbow()
+
+        }
+    
+    }
+
     setOffsetInRainbow(cameraVelocity) {
         this.rainbowToDraw.y += cameraVelocity
     }

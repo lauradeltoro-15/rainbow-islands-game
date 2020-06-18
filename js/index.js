@@ -4,13 +4,15 @@ const gameInstructions = document.querySelector(".game-instructions")
 const introAudio = document.querySelector(".introAudio")
 const levelAudio = document.querySelector(".levelAudio")
 const insertCoins = document.querySelectorAll("#insert-coin")
+const introScreen = document.querySelector(".game-instructions")
 const endGames = document.querySelectorAll(".end-message")
-// window.addEventListener("load", () => {
-// introAudio.play()
+
+
+// introAudio.addEventListener("load", () => {
+//     introAudio.volume = 0.2
+//     introAudio.play()
+
 // })
-
-
-
 
 
 insertCoins.forEach(elm => {
@@ -23,6 +25,8 @@ insertCoins.forEach(elm => {
 
 
 startButton.addEventListener("click", () => {
+    introAudio.pause()
+    levelAudio.volume = 0.1
     // levelAudio.play()
     canvas.classList.add("start")
     gameInstructions.classList.add("inactive")

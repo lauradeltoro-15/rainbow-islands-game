@@ -48,6 +48,7 @@ const Game = {
     chest: undefined,
     winMessage: undefined,
     winnerTimeOut: 300,
+    superPowerTimeOut: 800,
     imageHeartSource: "images/heart.png",
     spriteWithHeartSource: "images/sprite-with-heart.png",
     basePosition: {
@@ -72,6 +73,7 @@ const Game = {
         this.background.createBackground()
         this.map.createMapImage()
         this.map.createMapCoinImage()
+        this.map.createMapSuperPowerImage()
         this.player.createImgPlayer()
         this.createImgHeart()
         this.createGameInfoBoxes()
@@ -84,10 +86,12 @@ const Game = {
             this.background.drawBackground()
             this.isPlayerAtTopOfScreen() ? this.map.setOffsetInMap(this.player) : null
             this.map.drawMap(this.player)
-            this.map.animateMapCoin(this.framesCounter)
+            this.map.animateMapElementImg(this.framesCounter, this.map.mapCoinImg)
+            this.map.animateMapElementImg(this.framesCounter, this.map.mapSuperPowerImg)
             this.chest.setChestY()
             this.chest.drawChest()
             this.player.controlRainbows(this.higherPlayerPosition)
+            this.player.controlSuperRainbows(this.higherPlayerPosition)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
 
@@ -102,9 +106,11 @@ const Game = {
             !this.player.isAlive() ? this.manageLoser() : null
             this.isPlayerCollidingEnemies() ? this.damagePlayer() : null
             this.player.isFalling = this.player.playerVelocity.y < 0 ? true : false
+            this.player.isInSuperPower ? this.generateSuperPowerTimeOut() : null
 
             this.managePlayerCollisionWithPlatforms()
             this.managePlayerCollisionWithMapCoins()
+            this.managePlayerCollisionWithSuperPower()
             this.manageEnemiesCollissionWithPlatforms()
             this.managePlayerRainbowCollissions()
             this.manageEnemiesRainbowCollission()
@@ -126,7 +132,7 @@ const Game = {
                 this.player.setPlayerToStaticPosition()
             }
         } else {
-            if (!this.player.isJumping && !this.getCollidingRainbows(this.player.playerPosition, this.player.playerSize)) {
+            if (!this.player.isJumping && !this.getCollidingRainbows(this.player.playerPosition, this.player.playerSize) && !this.getCollidingSuperRainbows(this.player.playerPosition, this.player.playerSize)) {
                 this.player.playerVelocity.y = -this.cameraVelocity
                 this.player.playerPosition.y -= this.player.playerVelocity.y
             }
@@ -152,11 +158,18 @@ const Game = {
             this.score += 100
         }
     },
+    managePlayerCollisionWithSuperPower() {
+        const superPower = this.getCollidingSuperPowerInMap(this.player.playerPosition, this.player.playerSize)
+        if (superPower) {
+            this.map.layer[superPower.row][superPower.col] = 0
+            this.player.isInSuperPower = true
+        }
+    },
     getCollidingTile(characterPosition, characterSize) {
         let tileYAxis;
         this.map.layer.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
-                col !== 1 && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col) ? tileYAxis = this.map.getTileYAxis(rowIndex) : null
+                this.map.isATile(col) && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col) ? tileYAxis = this.map.getTileYAxis(rowIndex) : null
             })
         })
         return tileYAxis
@@ -165,16 +178,29 @@ const Game = {
         let coinValues;
         this.map.layer.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
-                if (col === 1 && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col)) {
+                if (this.map.isACoin(col) && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col)) {
                     coinValues = {
                         row: rowIndex,
                         col: colIndex
                     }
-                    console.log(coinValues)
                 }
             })
         })
         return coinValues
+    },
+    getCollidingSuperPowerInMap(characterPosition, characterSize) {
+        let superPower;
+        this.map.layer.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if (this.map.isASuperPower(col) && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col)) {
+                    superPower = {
+                        row: rowIndex,
+                        col: colIndex
+                    }
+                }
+            })
+        })
+        return superPower
     },
     isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col) {
         return (
@@ -205,13 +231,18 @@ const Game = {
                 this.enemies.splice(i, 1)
                 this.score += 50
             }
+            if (this.getCollidingSuperRainbows(enem.enemiePosition, enem.enemieSize)) {
+                this.enemies.splice(i, 1)
+                this.score += 200
+            }
         })
     },
     managePlayerRainbowCollissions() {
         const collidingRainbow = this.getCollidingRainbows(this.player.playerPosition, this.player.playerSize)
-        if (collidingRainbow) {
+        const collidingSuperRainbow = this.getCollidingSuperRainbows(this.player.playerPosition, this.player.playerSize)
+        if (collidingRainbow || collidingSuperRainbow) {
             if (this.player.isFalling) {
-                this.player.basePosition.y = collidingRainbow
+                this.player.basePosition.y = collidingRainbow ? collidingRainbow : collidingSuperRainbow
                 this.player.playerPosition.y = this.player.basePosition.y - this.player.playerSize.h
                 this.player.setPlayerToStaticPosition()
             }
@@ -220,28 +251,41 @@ const Game = {
     getCollidingRainbows(characterPosition, characterSize) {
         let rainbowYAxis;
         this.player.rainbowsConstructed.forEach(rainbow => {
-            if (rainbow.actualRainbowDirection === "right") {
-                if (
-                    characterPosition.x + characterSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
-                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y - 5 &&
-                    characterPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
-                    characterPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
-                ) {
-                    rainbowYAxis = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
-                }
-            } else if (rainbow.actualRainbowDirection === "left") {
-                if (
-                    characterPosition.x + characterSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
-                    characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y - 5 &&
-                    characterPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
-                    characterPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
-                ) {
-                    rainbowYAxis = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
-                }
+            if (rainbow.actualRainbowDirection === "right" && this.isRightRainbowColliding(characterPosition, characterSize, rainbow)) {
+                rainbowYAxis = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
+            } else if (rainbow.actualRainbowDirection === "left" && this.isLeftRainbowColliding(characterPosition, characterSize, rainbow)) {
+                rainbowYAxis = rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y
             }
 
         })
         return rainbowYAxis
+    },
+    getCollidingSuperRainbows(characterPosition, characterSize) {
+        let rainbowYAxis;
+        this.player.superRainbowsConstructed.forEach(rainbow => {
+            if (this.isRightRainbowColliding(characterPosition, characterSize, rainbow)) {
+                rainbowYAxis = rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y
+            } else if (this.isLeftRainbowColliding(characterPosition, characterSize, rainbow)) {
+                rainbowYAxis = rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y
+            }
+        })
+        return rainbowYAxis
+    },
+    isRightRainbowColliding(characterPosition, characterSize, rainbow) {
+        return (
+            characterPosition.x + characterSize.w - 20 >= rainbow.rainbowPosition.facingRigth.x &&
+            characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y - 5 &&
+            characterPosition.x <= rainbow.rainbowPosition.facingRigth.x + rainbow.rainbowSize.w &&
+            characterPosition.y < rainbow.rainbowPosition.facingRigth.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
+        )
+    },
+    isLeftRainbowColliding(characterPosition, characterSize, rainbow) {
+        return (
+            characterPosition.x + characterSize.w >= rainbow.rainbowPosition.facingLeft.x - rainbow.rainbowSize.w &&
+            characterPosition.y + characterSize.h >= rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y - 5 &&
+            characterPosition.x <= rainbow.rainbowPosition.facingLeft.x - 20 &&
+            characterPosition.y < rainbow.rainbowPosition.facingLeft.y + rainbow.rainbowToDraw.y + rainbow.rainbowSize.h
+        )
     },
     createRandomEnemie() {
         if (this.framesCounter % 300 === 0) {
@@ -374,6 +418,14 @@ const Game = {
     },
     isPlayerAtTopOfScreen() {
         return this.player.playerPosition.y <= this.higherPlayerPosition && !this.player.isJumping
+    },
+    generateSuperPowerTimeOut() {
+        if (this.superPowerTimeOut > 0) {
+            this.superPowerTimeOut--
+        } else {
+            this.superPower = 800
+            this.player.isInSuperPower = false
+        }
     }
 
 }

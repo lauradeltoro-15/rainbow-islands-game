@@ -4,6 +4,8 @@
           this.canvasSize = canvasSize
           this.keys = keys
           this.rainbowsConstructed = []
+          this.superRainbowsConstructed = []
+          this.isInSuperPower = false
           this.isMoving = false
           this.isJumping = false
           this.jumpDirection = undefined
@@ -84,15 +86,29 @@
 
           }
       }
+      eraseRainbow(rainbow) {
+          rainbow.isErasing = true
+          rainbow.rainbowSize.w -= 20
+          
+      }
+
       controlRainbows(higherPlayerPosition) {
           this.rainbowsConstructed.forEach(elm => {
               elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
               elm.rainbowCounter++
               if (elm.rainbowCounter >= 300) {
-                  elm.isErasing = true
-                  elm.rainbowSize.w -= 5
+                  this.eraseRainbow(elm)
                   elm.rainbowSize.w <= 10 ? this.rainbowsConstructed.shift() : null
-
+              }
+          })
+      }
+      controlSuperRainbows(higherPlayerPosition) {
+          this.superRainbowsConstructed.forEach(elm => {
+              elm.drawSuperRainbow(higherPlayerPosition, this, this.cameraVelocity)
+              elm.rainbowCounter ++
+              if (elm.rainbowCounter >= 200) {
+                  this.eraseRainbow(elm)
+                  elm.rainbowSize.w <= 10 ? this.superRainbowsConstructed.shift() : null
               }
           })
       }
@@ -139,9 +155,13 @@
                       break;
                   case this.keys.XKey:
                       this.isConstructing = true
-                      this.isFacingRight ? this.actualRainbowDirection = "right" : this.actualRainbowDirection = "left"
-                      this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight, this.actualRainbowDirection))
-                      break;
+                      if (this.isInSuperPower) {
+                          this.superRainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, false, "left"), new Rainbow(this.ctx, this.playerPosition, this.playerSize, true, "rigth"))
+                      } else {
+                          this.isFacingRight ? this.actualRainbowDirection = "right" : this.actualRainbowDirection = "left"
+                          this.rainbowsConstructed.push(new Rainbow(this.ctx, this.playerPosition, this.playerSize, this.isFacingRight, this.actualRainbowDirection))
+                          break;
+                      }
               }
           })
           document.addEventListener("keyup", e => {
