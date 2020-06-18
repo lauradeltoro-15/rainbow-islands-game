@@ -1,8 +1,7 @@
 class Map {
-    constructor(ctx, cols, rows, mapTSize, canvasSize, cameraVelocity, source, framesCounter) {
+    constructor(ctx, cols, rows, mapTSize, canvasSize, cameraVelocity, source) {
         this.canvasSize = canvasSize
         this.ctx = ctx
-        this.framesCounter = framesCounter
         this.mapToDraw = {
             y: 0
         }
@@ -112,8 +111,8 @@ class Map {
             }
         }))
     }
-    animateMapCoin() {
-        this.framesCounter % 500 === 0 ? this.mapCoinImg.framesIndex++ : null
+    animateMapCoin(framesCounter) {
+        framesCounter % 25 === 0 ? this.mapCoinImg.framesIndex++ : null
         this.mapCoinImg.framesIndex > this.mapCoinImg.frames - 1 ? this.mapCoinImg.framesIndex = 0 : null
     }
     setOffsetInMap(player) {

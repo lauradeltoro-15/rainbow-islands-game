@@ -63,7 +63,7 @@ const Game = {
     },
     startGame() {
         this.background = new Background(this.ctx, this.canvasSize, "images/skybackground.jpeg")
-        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png", this.framesCounter)
+        this.map = new Map(this.ctx, this.mapCols, this.mapRows, this.mapTSize, this.canvasSize, this.cameraVelocity, "images/21-tileset.png")
         this.player = new Player(this.ctx, this.canvasSize, this.basePosition.y, "images/running-bothsides.png", 16, this.keys, this.cameraVelocity)
         this.chest = new Chest(this.ctx, this.canvasSize, 200, 250, this.map)
         this.winMessage = new WinMessage(this.ctx, this.canvasSize, 70, 600, this.map)
@@ -84,7 +84,7 @@ const Game = {
             this.background.drawBackground()
             this.isPlayerAtTopOfScreen() ? this.map.setOffsetInMap(this.player) : null
             this.map.drawMap(this.player)
-            this.map.animateMapCoin()
+            this.map.animateMapCoin(this.framesCounter)
             this.chest.setChestY()
             this.chest.drawChest()
             this.player.controlRainbows(this.higherPlayerPosition)
@@ -166,7 +166,10 @@ const Game = {
         this.map.layer.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
                 if (col === 1 && this.isMapCollision(characterPosition, characterSize, rowIndex, colIndex, col)) {
-                    coinValues = {row: rowIndex, col: colIndex}
+                    coinValues = {
+                        row: rowIndex,
+                        col: colIndex
+                    }
                     console.log(coinValues)
                 }
             })
