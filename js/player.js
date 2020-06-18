@@ -8,10 +8,10 @@
           this.isInSuperPower = false
           this.isMoving = false
           this.isJumping = false
-          this.jumpDirection = undefined
-          this.isConstructing = false
           this.isFacingRight = true
           this.isFalling = false
+          this.jumpDirection = undefined
+          this.isConstructing = false
           this.lives = 3
           this.cameraVelocity = cameraVelocity
           this.actualRainbowDirection = undefined
@@ -35,7 +35,7 @@
               min: 0
           }
           this.playerPosition = {
-              x: this.canvasSize.w / 2,
+              x: this.canvasSize.w / 2 - this.playerSize.w / 2,
               y: YBasePosition - this.playerSize.h
           }
           this.playerVelocity = {
@@ -86,12 +86,6 @@
 
           }
       }
-      eraseRainbow(rainbow) {
-          rainbow.isErasing = true
-          rainbow.rainbowSize.w -= 20
-          
-      }
-
       controlRainbows(higherPlayerPosition) {
           this.rainbowsConstructed.forEach(elm => {
               elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
@@ -105,12 +99,16 @@
       controlSuperRainbows(higherPlayerPosition) {
           this.superRainbowsConstructed.forEach(elm => {
               elm.drawSuperRainbow(higherPlayerPosition, this, this.cameraVelocity)
-              elm.rainbowCounter ++
+              elm.rainbowCounter++
               if (elm.rainbowCounter >= 200) {
                   this.eraseRainbow(elm)
                   elm.rainbowSize.w <= 10 ? this.superRainbowsConstructed.shift() : null
               }
           })
+      }
+      eraseRainbow(rainbow) {
+          rainbow.isErasing = true
+          rainbow.rainbowSize.w -= 20
       }
       applyJumpGravity() {
           this.jumpDirection === "right" && this.playerPosition.x < this.range.max ? this.playerPosition.x += this.playerVelocity.x / 5 : null

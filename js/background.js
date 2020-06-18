@@ -7,7 +7,6 @@ class Background {
             h: this.canvasSize.h
         }
         this.backgroundImg = undefined
-
         this.backgroundImgSrc = backgroundImgSrc
         this.backgroundPosition = {
             x: 0,
@@ -21,7 +20,6 @@ class Background {
     createBackground() {
         this.backgroundImg = new Image()
         this.backgroundImg.src = this.backgroundImgSrc
-
     }
     drawBackground() {
         this.ctx.drawImage(this.backgroundImg, this.backgroundPosition.x, this.backgroundPosition.y, this.canvasSize.w, this.canvasSize.h)

@@ -58,7 +58,7 @@ const Game = {
     initGame(id) {
         this.canvasDom = document.getElementById(id)
         this.ctx = this.canvasDom.getContext('2d')
-        this.resetValues()
+        this.setDimensions()
         this.startGame()
 
     },
@@ -79,7 +79,6 @@ const Game = {
         this.player.createImgPlayer()
         this.createImgHeart()
         this.createGameInfoBoxes()
-
         this.chest.createChest()
         this.winMessage.createWinMessage()
 
@@ -96,12 +95,10 @@ const Game = {
             this.player.controlSuperRainbows(this.higherPlayerPosition)
             this.player.drawPlayer(this.framesCounter)
             this.enemies.forEach(enemie => enemie.drawFloorEnemie(this.framesCounter))
-
-            this.eraseEnemies()
             this.drawGameInfoBoxes()
             this.drawLives()
             this.drawScore()
-
+            this.eraseEnemies()
 
             this.isPlaying ? this.createRandomEnemie() : null
             this.hasPlayerWon() ? this.manageWinner() : null;
@@ -410,14 +407,6 @@ const Game = {
         this.basePosition.y = this.canvasSize.h - this.mapTSize * 2
         this.canvasDom.setAttribute('width', this.canvasSize.w)
         this.canvasDom.setAttribute('height', this.canvasSize.h)
-    },
-    resetValues() {
-        this.setDimensions()
-        this.enemies.splice(0, this.enemies.length)
-        this.score = 0
-        this.isPlaying = true
-        this.winnerTimeOut = 300
-        this.framesCounter = 0
     },
     isPlayerAtTopOfScreen() {
         return this.player.playerPosition.y <= this.higherPlayerPosition && !this.player.isJumping

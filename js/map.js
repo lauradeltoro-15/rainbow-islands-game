@@ -110,7 +110,6 @@ class Map {
                         this.tSize
                     )
                 } else if (this.isASuperPower(col)) {
-
                     this.ctx.drawImage(
                         this.mapSuperPowerImg.img,
                         this.mapSuperPowerImg.framesIndex * Math.floor(this.mapSuperPowerImg.img.width / this.mapSuperPowerImg.frames),
@@ -152,7 +151,7 @@ class Map {
         elementImg.framesIndex > elementImg.frames - 1 ? elementImg.framesIndex = 0 : null
     }
     setOffsetInMap(player) {
-        this.mapToDraw.y += 10
+        this.mapToDraw.y += this.cameraVelocity
         player.isJumping = false
     }
     getTileYAxis(rowIndex) {

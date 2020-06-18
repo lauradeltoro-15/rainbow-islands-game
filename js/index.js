@@ -11,36 +11,31 @@ const mainPageSoundOff = document.querySelector(".sound-off.main-page")
 const levelGameSoundOn = document.querySelector(".game .sound-on")
 const levelGameSoundOff = document.querySelector(".game .sound-off")
 
-
-mainPageSoundOn.addEventListener("click", () => {
-    introAudio.volume = 0.1
-    introAudio.play()
-    mainPageSoundOn.classList.add("inactive")
-    mainPageSoundOff.classList.remove("inactive")
-})
-mainPageSoundOff.addEventListener("click", () => {
-    introAudio.pause()
-    mainPageSoundOn.classList.remove("inactive")
-    mainPageSoundOff.classList.add("inactive")
-})
-
-
-insertCoins.forEach(elm => {
-    elm.addEventListener("click", () => {
-        endGames.forEach(elm => {
-            location.reload();
-        })
-    })
-})
-
-
 startButton.addEventListener("click", () => {
     introAudio.pause()
     levelAudio.volume = 0.1
     levelAudio.play()
     canvas.classList.add("start")
     levelGameSoundOff.classList.remove("inactive")
-
     gameInstructions.classList.add("inactive")
     Game.initGame('canvas')
+})
+mainPageSoundOn.addEventListener("click", () => {
+    introAudio.volume = 0.1
+    introAudio.play()
+    mainPageSoundOn.classList.add("inactive")
+    mainPageSoundOff.classList.remove("inactive")
+})
+
+mainPageSoundOff.addEventListener("click", () => {
+    introAudio.pause()
+    mainPageSoundOn.classList.remove("inactive")
+    mainPageSoundOff.classList.add("inactive")
+})
+insertCoins.forEach(elm => {
+    elm.addEventListener("click", () => {
+        endGames.forEach(elm => {
+            location.reload();
+        })
+    })
 })

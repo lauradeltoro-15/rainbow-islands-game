@@ -21,7 +21,6 @@ class WinMessage {
         this.winMsgImg.img.src = this.winMsgImg.src
     }
     drawWinMessage() {
-        console.log(`Image: ${this.winMsgImg.img} xPosition: ${this.winMsgPosition.x}yPosition: ${this.winMsgPosition.y}Width:${this.winMsgSize.w}Height:${this.winMsgSize.h}`)
         this.ctx.drawImage(
             this.winMsgImg.img,
             this.winMsgPosition.x,
@@ -32,6 +31,5 @@ class WinMessage {
     }
     animateWinMessage() {
         this.winMsgPosition.y <= this.map.getTileYAxis(4) - this.winMsgSize.h ? this.winMsgPosition.y += 2 : null
-
     }
 }
