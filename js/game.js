@@ -48,7 +48,7 @@ const Game = {
     chest: undefined,
     winMessage: undefined,
     winnerTimeOut: 300,
-    superPowerTimeOut: 800,
+    superPowerTimeOut: 900,
     imageHeartSource: "images/heart.png",
     spriteWithHeartSource: "images/sprite-with-heart.png",
     basePosition: {

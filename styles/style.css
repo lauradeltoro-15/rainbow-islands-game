@@ -14,11 +14,11 @@ p {
 }
 
 h1 {
-    color: #fe7f71
+    color: #d5584a;
 }
 
 h2 {
-    color: #fad57d;
+    color: #fe7f71;
     font-size: 1.5em
 }
 
@@ -65,7 +65,7 @@ article.instructions-container {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 50px 100px
+    padding: 0 100px
 }
 
 .main-image {
@@ -151,4 +151,25 @@ article.instructions-container {
 
 .game .sound.inactive {
     display: none;
+}
+
+.game-elements {
+
+    width: 200px
+}
+
+.good-for-you {
+    margin-bottom: 20px;
+}
+
+.main-elements-container {
+    display: flex;
+    justify-content: space-between
+}
+
+.icons {
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center
 }
