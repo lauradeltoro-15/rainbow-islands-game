@@ -415,7 +415,7 @@ const Game = {
         if (this.superPowerTimeOut > 0) {
             this.superPowerTimeOut--
         } else {
-            this.superPower = 800
+            this.superPower = 900
             this.player.isInSuperPower = false
             this.controlEndOfSuperPower()
         }

@@ -88,7 +88,7 @@
       }
       controlRainbows(higherPlayerPosition) {
           this.rainbowsConstructed.forEach(elm => {
-              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity)
+              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity, elm.rainbowSize.maxW, elm.growVel)
               elm.rainbowCounter++
               if (elm.rainbowCounter >= 300) {
                   this.eraseRainbow(elm)
@@ -96,9 +96,10 @@
               }
           })
       }
+
       controlSuperRainbows(higherPlayerPosition) {
           this.superRainbowsConstructed.forEach(elm => {
-              elm.drawSuperRainbow(higherPlayerPosition, this, this.cameraVelocity)
+              elm.drawRainbow(higherPlayerPosition, this, this.cameraVelocity, elm.rainbowSize.superMaxW, elm.superGrowVel)
               elm.rainbowCounter++
               if (elm.rainbowCounter >= 200) {
                   this.eraseRainbow(elm)

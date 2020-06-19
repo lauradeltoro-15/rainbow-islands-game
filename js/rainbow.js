@@ -52,41 +52,23 @@ class Rainbow {
                 this.rainbowSize.h / this.rainbowColors.length)
         });
     }
-    drawRainbow(higherPlayerPosition, player, cameraVelocity) {
+    drawRainbow(higherPlayerPosition, player, cameraVelocity, maxSize, growVel) {
         player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null
         if (this.isPlayerFacingRight) {
-            if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
+            if (this.rainbowSize.w >= maxSize || this.isErasing) {
                 this.createRightRainbow()
                 return
             }
-            this.rainbowSize.w += this.growVel
+            this.rainbowSize.w += growVel
             this.createRightRainbow()
         } else {
-            if (this.rainbowSize.w >= this.rainbowSize.maxW || this.isErasing) {
+            if (this.rainbowSize.w >= maxSize || this.isErasing) {
                 this.createLeftRainbow()
                 return
             }
-            this.rainbowSize.w += this.growVel
+            this.rainbowSize.w += growVel
             this.createLeftRainbow()
 
-        }
-    }
-    drawSuperRainbow(higherPlayerPosition, player, cameraVelocity) {
-        player.playerPosition.y <= higherPlayerPosition && !player.isJumping ? this.setOffsetInRainbow(cameraVelocity) : null
-        if (this.isPlayerFacingRight) {
-            if (this.rainbowSize.w >= this.rainbowSize.superMaxW || this.isErasing) {
-                this.createRightRainbow()
-                return
-            }
-            this.rainbowSize.w += this.superGrowVel
-            this.createRightRainbow()
-        } else {
-            if (this.rainbowSize.w >= this.rainbowSize.superMaxW || this.isErasing) {
-                this.createLeftRainbow()
-                return
-            }
-            this.rainbowSize.w += this.superGrowVel
-            this.createLeftRainbow()
         }
     }
     setOffsetInRainbow(cameraVelocity) {
